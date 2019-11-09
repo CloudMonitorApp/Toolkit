@@ -1,0 +1,14 @@
+{
+    "name": "emilmoe/cloudmonitor",
+    "description": "Toolkit for integrating a project to CloudMonitor.dk",
+    "require": {
+        "laravel/framework": "6.0"
+    },
+    "license": "GPL",
+    "authors": [
+        {
+            "name": "Emil Moe",
+            "email": "emil@moegroup.dk"
+        }
+    ]
+}
