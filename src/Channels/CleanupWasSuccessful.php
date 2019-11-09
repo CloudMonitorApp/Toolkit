@@ -6,7 +6,7 @@ use App\Exceptions\WebHookFailedException;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Notifications\Notification;
 
-class CleanupWasSuccessfulChannel extends CloudMonitorChannel
+class CleanupWasSuccessful extends CloudMonitorChannel
 {
     /**
      * @param Notifiable $notifiable
