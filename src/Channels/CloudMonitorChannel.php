@@ -44,7 +44,7 @@ class CloudMonitorChannel extends BaseNotification
         try {
             $response = $this->client->request(
                 'POST',
-                env('CLOUDMONITOR_URL'),
+                'https://cloudmonitor.dk/api/hooks/backup',
                 [
                     'headers' => [
                         'timestamp' => $timestamp,
