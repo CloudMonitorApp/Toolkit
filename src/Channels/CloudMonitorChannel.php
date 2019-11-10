@@ -56,7 +56,7 @@ class CloudMonitorChannel extends BaseNotification
                         ),
                     ],
                     'form_params' => [
-                        'application' => $this->applicationName(),
+                        'installation' => env('CLOUDMONITOR_INSTALLATION', null),
                         'event' => $event,
                         'code' => $code,
                     ]
