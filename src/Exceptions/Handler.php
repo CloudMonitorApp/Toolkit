@@ -10,7 +10,7 @@ use Illuminate\Encryption\Encrypter;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Request;
 
-class CloudMonitorException extends ExceptionHandler
+class Handler extends ExceptionHandler
 {
     private $client;
 
