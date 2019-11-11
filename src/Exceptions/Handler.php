@@ -61,6 +61,8 @@ class Handler extends ExceptionHandler
             }
         } catch (GuzzleException $exception) {
             throw new WebHookFailedException($exception->getMessage(), $exception->getCode(), $exception);
+        } finally {
+            Log::info('CloudMonitor closed client');
         }
 
         Log::error('CloudMonitor failed in posting to '. env('CLOUDMONITOR_URL'));
