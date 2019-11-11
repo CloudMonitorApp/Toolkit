@@ -29,7 +29,7 @@ class Handler extends ExceptionHandler
         try {
             $response = $this->client->request(
                 'POST',
-                'https://cloudmonitor.dk/api/hooks/exception',
+                'https://cloudmonitor.dk/api/hooks/error',
                 [
                     'headers' => [
                         'timestamp' => $timestamp,
@@ -117,7 +117,7 @@ class Handler extends ExceptionHandler
      */
     private function getData(Exception $e)
     {
-        $encrypter = new Encrypter(env('CLOUDMONITOR_KEY'), 'AES-256-CBC');
+        $encrypter = new Encrypter(env('CLOUDMONITOR_SECRET'), 'AES-256-CBC');
 
         return $encrypter->encrypt(
             json_encode(
