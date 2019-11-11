@@ -42,7 +42,7 @@ class Handler extends ExceptionHandler
                     ],
                     'form_params' => [
                         'event' => 'exception',
-                        'data' => $this->encrypt(base64_encode(json_encode($this->getData($e))), env('CLOUDMONITOR_SECRET')) #''#$this->test('hej') #$this->encrypt(base64_encode(json_encode($this->getData($e))), env('CLOUDMONITOR_SECRET'))
+                        'data' => $this->getData($e)
                     ]
                 ]
             );
@@ -67,57 +67,54 @@ class Handler extends ExceptionHandler
     }
 
     /**
-     * @param $msg
-     * @return string
-     */
-    private function encrypt($msg)
-    {
-        $encrypter = new Encrypter(env('CLOUDMONITOR_KEY'), 'AES-256-CBC');
-        return $encrypter->encrypt($msg);
-    }
-
-
-    /**
      * @param Exception $e
      * @return array
      */
     private function getData(Exception $e)
     {
-        return [
-            'app' => [
-                'type' => 'php',
-                'message' => $e->getMessage() ?? '',
-                'line' => $e->getLine() ?? '',
-                'file' => $e->getFile() ?? '',
-                'severity' => $e instanceof \Exception ? 0 : $e->getSeverity() ?? '',
-                'code' => $e->getCode() ?? '',
-                'class' => get_class($e) ?? '',
-                'original_class' => $e instanceof \Exception ? 'Exception' : $e->getOriginalClassName() ?? '',
-                'method' => Request::method(),
-                'previous' => $e->getPrevious() ?? '',
-                'preview' => $this->getPreview($e->getFile(), $e->getLine()),
-                'url' => url()->full(),
-                'stage' => env('APP_ENV', 'unknown APP_ENV'),
-            ],
-            'incident' => [
-                'ip' => Request::ip(),
-                'user_agent' => Request::userAgent(),
-                'user_id' => auth()->check() ? auth()->id() : null,
-                'user_data' => auth()->check() ? auth()->user()->toJson() : null,
-            ],
-            'trace' => collect($e->getTrace())->map(function ($trace, $index) {
-                return [
-                    'stack_key' => $index,
-                    'file' => $trace['file'] ?? null,
-                    'line' => $trace['line'] ?? null,
-                    'function' => $trace['function'],
-                    'class' => $trace['class'] ?? null,
-                    'type' => $trace['type'] ?? null,
-                    'args' => $trace['args'],
-                    'preview' => isset($trace['file'], $trace['line']) ? $this->getPreview($trace['file'], $trace['line']) : null,
-                ];
-            })
-        ];
+        $encrypter = new Encrypter(env('CLOUDMONITOR_KEY'), 'AES-256-CBC');
+
+        return gzencode(
+            $encrypter->encrypt(
+                json_encode([
+                    'app' => [
+                        'type' => 'php',
+                        'message' => $e->getMessage() ?? '',
+                        'line' => $e->getLine() ?? '',
+                        'file' => $e->getFile() ?? '',
+                        'severity' => $e instanceof \Exception ? 0 : $e->getSeverity() ?? '',
+                        'code' => $e->getCode() ?? '',
+                        'class' => get_class($e) ?? '',
+                        'original_class' => $e instanceof \Exception ? 'Exception' : $e->getOriginalClassName() ?? '',
+                        'method' => Request::method(),
+                        'previous' => $e->getPrevious() ?? '',
+                        'preview' => $this->getPreview($e->getFile(), $e->getLine()),
+                        'url' => url()->full(),
+                        'stage' => env('APP_ENV', 'unknown APP_ENV'),
+                    ],
+                    'incident' => [
+                        'ip' => Request::ip(),
+                        'user_agent' => Request::userAgent(),
+                        'user_id' => auth()->check() ? auth()->id() : null,
+                        'user_data' => auth()->check() ? auth()->user()->toJson() : null,
+                    ],
+                    'trace' => collect($e->getTrace())->map(function ($trace, $index) {
+                        return [
+                            'stack_key' => $index,
+                            'file' => $trace['file'] ?? null,
+                            'line' => $trace['line'] ?? null,
+                            'function' => $trace['function'],
+                            'class' => $trace['class'] ?? null,
+                            'type' => $trace['type'] ?? null,
+                            'args' => $trace['args'],
+                            'preview' => isset($trace['file'], $trace['line']) ? $this->getPreview($trace['file'], $trace['line']) : null,
+                        ];
+                    })
+                ]),
+                env('CLOUDMONITOR_SECRET')
+            ),
+            9
+        );
     }
 
     /**
