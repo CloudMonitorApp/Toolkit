@@ -20,6 +20,8 @@ class Handler extends ExceptionHandler
      */
     public function report(Exception $e)
     {
+        Log::info('Exception handler');
+
         parent::report($e);
 
         $this->client = new Client();
@@ -119,7 +121,7 @@ class Handler extends ExceptionHandler
      */
     private function getData(Exception $e)
     {
-        $encrypter = new Encrypter(env('CLOUDMONITOR_SECRET'), 'AES-256-CBC');
+        $encrypter = new Encrypter(env('CLOUDMONITOR_SECRET'), 'AES-128-CBC');
 
         return $encrypter->encrypt(
             json_encode(

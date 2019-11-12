@@ -3,8 +3,8 @@
 namespace EmilMoe\CloudMonitor;
 
 use Illuminate\Support\ServiceProvider;
-use Illuminate\Contracts\Debug\ExceptionHandler;
 use EmilMoe\CloudMonitor\Exceptions\Handler;
+use Illuminate\Contracts\Debug\ExceptionHandler;
 
 class CloudMonitorServiceProvider extends ServiceProvider
 {
@@ -15,7 +15,7 @@ class CloudMonitorServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        $this->app->bind(
+        $this->app->singleton(
             ExceptionHandler::class,
             Handler::class
         );
