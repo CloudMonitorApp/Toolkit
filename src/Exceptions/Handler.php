@@ -121,7 +121,7 @@ class Handler extends ExceptionHandler
      */
     private function getData(Exception $e)
     {
-        $encrypter = new Encrypter(env('CLOUDMONITOR_SECRET'), 'AES-128-CBC');
+        $encrypter = new Encrypter(base64_decode(env('CLOUDMONITOR_SECRET')), 'AES-128-CBC');
 
         return $encrypter->encrypt(
             json_encode(
