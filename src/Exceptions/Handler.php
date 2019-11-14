@@ -31,7 +31,7 @@ class Handler extends ExceptionHandler
         try {
             $response = $this->client->request(
                 'POST',
-                'https://cloudmonitor.dk/api/hooks/error',
+                env('CLOUDMONITOR_URL', 'https://cloudmonitor.dk/api/hooks/error'),
                 [
                     'headers' => [
                         'timestamp' => $timestamp,
@@ -53,7 +53,7 @@ class Handler extends ExceptionHandler
                 throw new WebHookFailedException('Webhook received a non 200 response');
             }
 
-            Log::debug('Webhook successfully posted to '. env('CLOUDMONITOR_URL'));
+            Log::debug('Webhook successfully posted to '. env('CLOUDMONITOR_URL', 'https://cloudmonitor.dk/api/hooks/error'));
 
             return;
 
@@ -67,7 +67,7 @@ class Handler extends ExceptionHandler
             Log::info('CloudMonitor closed client');
         }
 
-        Log::error('CloudMonitor failed in posting to '. env('CLOUDMONITOR_URL'));
+        Log::error('CloudMonitor failed in posting to '. env('CLOUDMONITOR_URL', 'https://cloudmonitor.dk/api/hooks/error'));
     }
 
     private function getApp(Exception $e): array
