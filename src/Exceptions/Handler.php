@@ -6,6 +6,7 @@ use App\Exceptions\Handler as ExceptionHandler;
 use Exception;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\ClientException;
+use GuzzleHttp\Exception\ServerException;
 use Illuminate\Encryption\Encrypter;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Request;
@@ -20,8 +21,6 @@ class Handler extends ExceptionHandler
      */
     public function report(Exception $e)
     {
-        Log::info('Exception handler');
-
         parent::report($e);
 
         $this->client = new Client();
@@ -53,21 +52,9 @@ class Handler extends ExceptionHandler
                 throw new WebHookFailedException('Webhook received a non 200 response');
             }
 
-            Log::debug('Webhook successfully posted to '. env('CLOUDMONITOR_URL'));
-
-            return;
-
-        } catch (ClientException $exception) {
-            if ($exception->getResponse()->getStatusCode() !== 410) {
-                throw new WebHookFailedException($exception->getMessage(), $exception->getCode(), $exception);
-            }
-        } catch (GuzzleException $exception) {
-            throw new WebHookFailedException($exception->getMessage(), $exception->getCode(), $exception);
-        } finally {
-            Log::info('CloudMonitor closed client');
+        } catch (\Exception $exception) {
+            Log::error($exception->getMessage());
         }
-
-        Log::error('CloudMonitor failed in posting to '. env('CLOUDMONITOR_URL'));
     }
 
     private function getApp(Exception $e): array
@@ -121,7 +108,7 @@ class Handler extends ExceptionHandler
      */
     private function getData(Exception $e)
     {
-        $encrypter = new Encrypter(env('CLOUDMONITOR_SECRET'), 'AES-128-CBC');
+        $encrypter = new Encrypter(base64_decode(env('CLOUDMONITOR_SECRET')), 'AES-128-CBC');
 
         return $encrypter->encrypt(
             json_encode(
