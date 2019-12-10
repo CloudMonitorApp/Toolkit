@@ -21,7 +21,7 @@ class Webhook
         try {
             $response = $client->request(
                 'POST',
-                'https://cloudmonitor.dk/api/error',
+                'https://cloudmonitor.dk/api/hooks/error',
                 [
                     'headers' => [
                         'timestamp' => $timestamp,
