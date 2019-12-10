@@ -7,6 +7,7 @@ use Monolog\Formatter\FormatterInterface;
 use Monolog\Logger;
 use Monolog\Handler\AbstractProcessingHandler;
 use Illuminate\Support\Facades\Request;
+use EmilMoe\CloudMonitor\Webhook;
 
 class LogHandler extends AbstractProcessingHandler
 {
