@@ -66,9 +66,7 @@ class CloudMonitorChannel extends BaseNotification
             if ($response->getStatusCode() !== 200) {
                 throw new WebHookFailedException('Webhook received a non 200 response');
             }
-
-            $this->logger->debug('Webhook successfully posted to '. env('CLOUDMONITOR_URL'));
-
+            
             return;
 
         } catch (ClientException $exception) {

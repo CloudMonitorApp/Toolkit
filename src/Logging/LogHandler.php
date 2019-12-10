@@ -1,20 +1,23 @@
 <?php
 
-namespace EmilMoe\CloudMonitor\Exceptions;
+namespace App\Logging;
 
-use App\Exceptions\Handler as ExceptionHandler;
-use Exception;
-use Illuminate\Encryption\Encrypter;
-use Illuminate\Support\Facades\Log;
+use App\Log;
+use Monolog\Formatter\FormatterInterface;
+use Monolog\Logger;
+use Monolog\Handler\AbstractProcessingHandler;
 use Illuminate\Support\Facades\Request;
-use EmilMoe\CloudMonitor\Webhook;
 
-class Handler extends ExceptionHandler
+class LogHandler extends AbstractProcessingHandler
 {
-    public function report(Exception $e)
+    public function __construct($level = Logger::DEBUG)
     {
-        parent::report($e);
-        Webhook::send('exception', $this->getData($e));
+        parent::__construct($level);
+    }
+
+    protected function write(array $record): void
+    {
+        Webhook::send('exception', $this->getData($record));
     }
 
     private function getApp(Exception $e): array
@@ -24,10 +27,10 @@ class Handler extends ExceptionHandler
             'message' => $e->getMessage() ?? '',
             'line' => $e->getLine() ?? '',
             'file' => $e->getFile() ?? '',
-            'severity' => $e instanceof \Exception ? 0 : $e->getSeverity() ?? '',
+            'severity' => $e->getSeverity() ?? '',
             'code' => $e->getCode() ?? '',
             'class' => get_class($e) ?? '',
-            'original_class' => $e instanceof \Exception ? 'Exception' : $e->getOriginalClassName() ?? '',
+            'original_class' => $e->getOriginalClassName() ?? '',
             'method' => Request::method(),
             'previous' => $e->getPrevious() ?? '',
             'preview' => $this->getPreview($e->getFile(), $e->getLine()),
@@ -36,7 +39,7 @@ class Handler extends ExceptionHandler
         ];
     }
 
-    private function getIncident(Exception $e): array
+    private function getIncident(): array
     {
         return [
             'ip' => Request::ip(),
@@ -73,9 +76,9 @@ class Handler extends ExceptionHandler
         return $encrypter->encrypt(
             json_encode(
                 [
-                    'app' => $this->getApp($e),
-                    'incident' => $this->getIncident($e),
-                    'trace' => $this->getTrace($e),
+                    'app' => $this->getApp($e['context']['exception']),
+                    'incident' => $this->getIncident(),
+                    'trace' => $this->getTrace($e['context']['exception']),
                 ]
             )
         );
