@@ -4,6 +4,7 @@ namespace EmilMoe\CloudMonitor\Logging;
 
 use App\Log;
 use Monolog\Formatter\FormatterInterface;
+use Exception;
 use Monolog\Logger;
 use Monolog\Handler\AbstractProcessingHandler;
 use Illuminate\Support\Facades\Request;
