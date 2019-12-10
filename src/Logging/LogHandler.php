@@ -34,7 +34,7 @@ class LogHandler extends AbstractProcessingHandler
             'message' => $e->getMessage() ?? '',
             'line' => $e->getLine() ?? '',
             'file' => $e->getFile() ?? '',
-            'severity' => $e->getSeverity() ?? '',
+            'severity' => method_exists($e, 'getSeverity') ? $e->getSeverity() : '',
             'level' => $this->error['level_name'],
             'code' => $e->getCode() ?? '',
             'class' => get_class($e) ?? '',
