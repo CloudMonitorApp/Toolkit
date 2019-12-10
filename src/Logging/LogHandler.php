@@ -38,7 +38,7 @@ class LogHandler extends AbstractProcessingHandler
             'level' => $this->error['level_name'],
             'code' => $e->getCode() ?? '',
             'class' => get_class($e) ?? '',
-            'original_class' => $e->getOriginalClassName() ?? '',
+            'original_class' => method_exists($e, 'getOriginalClassName') ? $e->getOriginalClassName() : '',
             'method' => Request::method(),
             'previous' => $e->getPrevious() ?? '',
             'preview' => $this->getPreview($e->getFile(), $e->getLine()),
