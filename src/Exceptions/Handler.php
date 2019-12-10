@@ -14,7 +14,7 @@ class Handler extends ExceptionHandler
     public function report(Exception $e)
     {
         parent::report($e);
-        Webhook::send('exception', $this->getData($e));
+        Webhook::send($this->getData($e));
     }
 
     private function getApp(Exception $e): array

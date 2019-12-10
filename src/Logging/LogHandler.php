@@ -17,7 +17,7 @@ class LogHandler extends AbstractProcessingHandler
 
     protected function write(array $record): void
     {
-        Webhook::send('exception', $this->getData($record));
+        Webhook::send($this->getData($record));
     }
 
     private function getApp(Exception $e): array
