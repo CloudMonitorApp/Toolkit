@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Logging;
+namespace EmilMoe\CloudMonitor\Logging;
 
 use Monolog\Logger;
 
