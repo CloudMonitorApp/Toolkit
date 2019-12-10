@@ -75,7 +75,7 @@ class LogHandler extends AbstractProcessingHandler
      * @param Exception $e
      * @return string
      */
-    private function getData(Exception $e): string
+    private function getData(array $e): string
     {
         $encrypter = new Encrypter(base64_decode(env('CLOUDMONITOR_SECRET')), 'AES-128-CBC');
 
