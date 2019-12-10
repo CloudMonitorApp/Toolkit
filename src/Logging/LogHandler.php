@@ -10,6 +10,8 @@ use Illuminate\Support\Facades\Request;
 
 class LogHandler extends AbstractProcessingHandler
 {
+    private $error;
+
     public function __construct($level = Logger::DEBUG)
     {
         parent::__construct($level);
@@ -17,6 +19,8 @@ class LogHandler extends AbstractProcessingHandler
 
     protected function write(array $record): void
     {
+        $this->error = $record;
+
         Webhook::send($this->getData($record));
     }
 
@@ -28,6 +32,7 @@ class LogHandler extends AbstractProcessingHandler
             'line' => $e->getLine() ?? '',
             'file' => $e->getFile() ?? '',
             'severity' => $e->getSeverity() ?? '',
+            'level' => $this->error['level_name'],
             'code' => $e->getCode() ?? '',
             'class' => get_class($e) ?? '',
             'original_class' => $e->getOriginalClassName() ?? '',
