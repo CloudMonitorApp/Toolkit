@@ -23,7 +23,7 @@ class Handler extends ExceptionHandler
             'type' => 'php',
             'message' => $e->getMessage() ?? '',
             'line' => $e->getLine() ?? '',
-            'file' => $e->getFile() ?? '',
+            'file' => str_ireplace(base_path(), '', $e->getFile()) ?? '',
             'severity' => $e instanceof \Exception ? 0 : $e->getSeverity() ?? '',
             'code' => $e->getCode() ?? '',
             'class' => get_class($e) ?? '',
@@ -51,7 +51,7 @@ class Handler extends ExceptionHandler
         return collect($e->getTrace())->map(function ($trace, $index) {
             return [
                 'stack_key' => $index,
-                'file' => $trace['file'] ?? null,
+                'file' => str_ireplace(base_path(), '', $trace['file']) ?? null,
                 'line' => $trace['line'] ?? null,
                 'function' => $trace['function'],
                 'class' => $trace['class'] ?? null,

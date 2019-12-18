@@ -33,7 +33,7 @@ class LogHandler extends AbstractProcessingHandler
             'type' => 'php',
             'message' => $e->getMessage() ?? '',
             'line' => $e->getLine() ?? '',
-            'file' => $e->getFile() ?? '',
+            'file' => str_ireplace(base_path(), '', $e->getFile()) ?? '',
             'severity' => method_exists($e, 'getSeverity') ? $e->getSeverity() : '',
             'level' => $this->error['level_name'],
             'code' => $e->getCode() ?? '',
@@ -62,7 +62,7 @@ class LogHandler extends AbstractProcessingHandler
         return collect($e->getTrace())->map(function ($trace, $index) {
             return [
                 'stack_key' => $index,
-                'file' => $trace['file'] ?? null,
+                'file' => str_ireplace(base_path(), '', $trace['file']) ?? null,
                 'line' => $trace['line'] ?? null,
                 'function' => $trace['function'],
                 'class' => $trace['class'] ?? null,
