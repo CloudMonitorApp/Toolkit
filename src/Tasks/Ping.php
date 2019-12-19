@@ -4,14 +4,17 @@ namespace EmilMoe\CloudMonitor\Tasks;
 
 use EmilMoe\CloudMonitor\Webhook;
 
-class CloudMonitorTaskPing
+class Ping
 {
     /**
      * 
      */
-    public static function begin(string $id): string
+    public static function before(string $id): string
     {
-
+        Webhook::send(json_encode([
+            'id' => $id,
+            'event' => 'begin',
+        ]));
     }
 
     /**
@@ -21,7 +24,7 @@ class CloudMonitorTaskPing
     {
         Webhook::send(json_encode([
             'id' => $id,
-            'success' => true
+            'event' => 'success',
         ]));
     }
 
@@ -32,7 +35,7 @@ class CloudMonitorTaskPing
     {
         Webhook::send(json_encode([
             'id' => $id,
-            'success' => false
+            'event' => 'failure',
         ]));
     }
 }
