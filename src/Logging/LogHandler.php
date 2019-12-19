@@ -22,8 +22,11 @@ class LogHandler extends AbstractProcessingHandler
 
     protected function write(array $record): void
     {
-        $this->error = $record;
+        if (! isset($record['context']['exception'])) {
+            return;
+        }
 
+        $this->error = $record;
         Webhook::send($this->getData($record));
     }
 

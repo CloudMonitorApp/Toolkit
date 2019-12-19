@@ -9,7 +9,7 @@ class Ping
     /**
      * 
      */
-    public static function before(string $id): string
+    public static function before(string $id): void
     {
         Webhook::send(json_encode([
             'id' => $id,
@@ -20,7 +20,7 @@ class Ping
     /**
      *
      */
-    public static function success(string $id): string
+    public static function success(string $id): void
     {
         Webhook::send(json_encode([
             'id' => $id,
@@ -31,7 +31,7 @@ class Ping
     /**
      *
      */
-    public static function failure(string $id): string
+    public static function failure(string $id): void
     {
         Webhook::send(json_encode([
             'id' => $id,
