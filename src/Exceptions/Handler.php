@@ -4,7 +4,6 @@ namespace EmilMoe\CloudMonitor\Exceptions;
 
 use App\Exceptions\Handler as ExceptionHandler;
 use Exception;
-use Illuminate\Encryption\Encrypter;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Request;
 use EmilMoe\CloudMonitor\Webhook;
@@ -70,14 +69,12 @@ class Handler extends ExceptionHandler
     {
         $encrypter = new Encrypter(base64_decode(env('CLOUDMONITOR_SECRET')), 'AES-128-CBC');
 
-        return $encrypter->encrypt(
-            json_encode(
-                [
-                    'app' => $this->getApp($e),
-                    'incident' => $this->getIncident($e),
-                    'trace' => $this->getTrace($e),
-                ]
-            )
+        return json_encode(
+            [
+                'app' => $this->getApp($e),
+                'incident' => $this->getIncident($e),
+                'trace' => $this->getTrace($e),
+            ]
         );
     }
 

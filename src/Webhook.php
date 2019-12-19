@@ -6,6 +6,7 @@ use GuzzleHttp\Client;
 use GuzzleHttp\Exception\ClientException;
 use GuzzleHttp\Exception\ServerException;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Encryption\Encrypter;
 
 class Webhook
 {
@@ -47,5 +48,11 @@ class Webhook
         } catch (\Exception $exception) {
             Log::error($exception->getMessage());
         }
+    }
+
+    public function encrypt(string $data): string
+    {
+        $encrypter = new Encrypter(base64_decode(env('CLOUDMONITOR_SECRET')), 'AES-128-CBC');
+        return $encrypter->encrypt($data);
     }
 }

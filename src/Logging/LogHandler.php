@@ -82,16 +82,12 @@ class LogHandler extends AbstractProcessingHandler
      */
     private function getData(array $e): string
     {
-        $encrypter = new Encrypter(base64_decode(env('CLOUDMONITOR_SECRET')), 'AES-128-CBC');
-
-        return $encrypter->encrypt(
-            json_encode(
-                [
-                    'app' => $this->getApp($e['context']['exception']),
-                    'incident' => $this->getIncident(),
-                    'trace' => $this->getTrace($e['context']['exception']),
-                ]
-            )
+        return json_encode(
+            [
+                'app' => $this->getApp($e['context']['exception']),
+                'incident' => $this->getIncident(),
+                'trace' => $this->getTrace($e['context']['exception']),
+            ]
         );
     }
 
