@@ -67,8 +67,6 @@ class Handler extends ExceptionHandler
      */
     private function getData(Exception $e): string
     {
-        $encrypter = new Encrypter(base64_decode(env('CLOUDMONITOR_SECRET')), 'AES-128-CBC');
-
         return json_encode(
             [
                 'app' => $this->getApp($e),
