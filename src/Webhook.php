@@ -36,7 +36,7 @@ class Webhook
                     ],
                     'form_params' => [
                         'installation' => env('CLOUDMONITOR_INSTALLATION', null),
-                        'data' => $this->encrypt($data)
+                        'data' => self::encrypt($data)
                     ]
                 ]
             );
@@ -50,7 +50,7 @@ class Webhook
         }
     }
 
-    public function encrypt(string $data): string
+    public static function encrypt(string $data): string
     {
         $encrypter = new Encrypter(base64_decode(env('CLOUDMONITOR_SECRET')), 'AES-128-CBC');
         return $encrypter->encrypt($data);
