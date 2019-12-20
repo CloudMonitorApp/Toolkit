@@ -64,7 +64,7 @@ class LogHandler extends AbstractProcessingHandler
         return collect($e->getTrace())->map(function ($trace, $index) {
             return [
                 'stack_key' => $index,
-                'file' => str_ireplace(base_path(), '', $trace['file']) ?? null,
+                'file' => str_ireplace(base_path(), '', $trace['file'] ?? null) ?? null,
                 'line' => $trace['line'] ?? null,
                 'function' => $trace['function'],
                 'class' => $trace['class'] ?? null,
