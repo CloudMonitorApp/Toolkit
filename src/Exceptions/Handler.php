@@ -24,6 +24,7 @@ class Handler extends ExceptionHandler
             'line' => $e->getLine() ?? '',
             'file' => str_ireplace(base_path(), '', $e->getFile()) ?? '',
             'severity' => $e instanceof \Exception ? 0 : $e->getSeverity() ?? '',
+            'level' => '',
             'code' => $e->getCode() ?? '',
             'class' => get_class($e) ?? '',
             'original_class' => $e instanceof \Exception ? 'Exception' : $e->getOriginalClassName() ?? '',

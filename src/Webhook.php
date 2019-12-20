@@ -50,6 +50,9 @@ class Webhook
         }
     }
 
+    /**
+     * Encrypt message before sending.
+     */
     public static function encrypt(string $data): string
     {
         $encrypter = new Encrypter(base64_decode(env('CLOUDMONITOR_SECRET')), 'AES-128-CBC');
