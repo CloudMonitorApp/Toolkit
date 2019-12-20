@@ -14,7 +14,7 @@ class Webhook
      * @param Exception $e
      * @throws Exception
      */
-    public static function send(string $data): void
+    public static function send(string $endpoint, string $data): void
     {
         $client = new Client();
 
@@ -23,7 +23,7 @@ class Webhook
         try {
             $response = $client->request(
                 'POST',
-                'https://cloudmonitor.dk/api/hooks/error',
+                'https://cloudmonitor.dk/api/hooks/'. $endpoint,
                 [
                     'headers' => [
                         'timestamp' => $timestamp,
@@ -36,7 +36,7 @@ class Webhook
                     ],
                     'form_params' => [
                         'installation' => env('CLOUDMONITOR_INSTALLATION', null),
-                        'data' => $data
+                        'data' => $this->encrypt($data)
                     ]
                 ]
             );

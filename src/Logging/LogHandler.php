@@ -26,7 +26,7 @@ class LogHandler extends AbstractProcessingHandler
         }
 
         $this->error = $record;
-        Webhook::send($this->getData($record));
+        Webhook::send('error', $this->getData($record));
     }
 
     private function getApp(Exception $e): array
