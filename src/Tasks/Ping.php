@@ -11,7 +11,7 @@ class Ping
      */
     public static function before(string $id): void
     {
-        Webhook::send('ping', json_encode([
+        Webhook::send('task', json_encode([
             'id' => $id,
             'event' => 'begin',
         ]));
@@ -22,7 +22,7 @@ class Ping
      */
     public static function success(string $id): void
     {
-        Webhook::send('ping', json_encode([
+        Webhook::send('task', json_encode([
             'id' => $id,
             'event' => 'success',
         ]));
@@ -33,7 +33,7 @@ class Ping
      */
     public static function failure(string $id): void
     {
-        Webhook::send('ping', json_encode([
+        Webhook::send('task', json_encode([
             'id' => $id,
             'event' => 'failure',
         ]));
