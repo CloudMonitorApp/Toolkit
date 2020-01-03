@@ -42,7 +42,9 @@ class Handler extends ExceptionHandler
             'ip' => Request::ip(),
             'user_agent' => Request::userAgent(),
             'user_id' => auth()->check() ? auth()->id() : null,
-            'user_data' => auth()->check() ? auth()->user()->toJson() : null,
+            'user' => auth()->check() ? auth()->user()->toJson() : null,
+            'session' => Request::session()->all(),
+            'request' => json_encode(Request::toArray()),
         ];
     }
 
