@@ -57,7 +57,7 @@ class LogHandler extends AbstractProcessingHandler
             'user_id' => auth()->check() ? auth()->id() : null,
             'user' => auth()->check() ? auth()->user()->toJson() : null,
             'session' => Request::hasSession() ? Request::session()->except(['password', 'password_repeat', 'password_again']) : '',
-            'request' => Request::except(['password', 'password_repeat', 'password_again'])->toArray(),
+            'request' => Request::except(['password', 'password_repeat', 'password_again']),
         ];
     }
 

@@ -44,7 +44,7 @@ class Handler extends ExceptionHandler
             'user_id' => auth()->check() ? auth()->id() : null,
             'user' => auth()->check() ? auth()->user()->toJson() : null,
             'session' => Request::hasSession() ? Request::session()->except(['password', 'password_repeat', 'password_again']) : '',
-            'request' => json_encode(Request::except(['password', 'password_repeat', 'password_again'])->toArray()),
+            'request' => json_encode(Request::except(['password', 'password_repeat', 'password_again'])),
         ];
     }
 
