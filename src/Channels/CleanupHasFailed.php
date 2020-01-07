@@ -15,6 +15,7 @@ class CleanupHasFailed extends CloudMonitorChannel
      */
     public function send($notifiable, Notification $notification)
     {
+        Log::info(json_encode($this->exception));
         parent::dispatch($notifiable, $notification, 'cleanup', 100);
     }
 }

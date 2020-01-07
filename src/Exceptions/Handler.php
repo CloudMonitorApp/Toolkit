@@ -43,7 +43,7 @@ class Handler extends ExceptionHandler
             'user_agent' => Request::userAgent(),
             'user_id' => auth()->check() ? auth()->id() : null,
             'user' => auth()->check() ? auth()->user()->toJson() : null,
-            'session' => Request::hasSession() ? Request::session()->except(['password', 'password_repeat', 'password_again']) : '',
+            'session' => Request::hasSession() ? Request::session()->all() : '',
             'request' => json_encode(Request::except(['password', 'password_repeat', 'password_again'])),
         ];
     }
