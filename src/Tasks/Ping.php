@@ -20,6 +20,8 @@ class Ping
             $event->sendOutputTo(storage_path('logs/schedule-'.sha1($event->mutexName()).'.log'));
         }
 
+        echo $event->command;
+
         Webhook::send('task', json_encode([
             'data' => [
                 'command' => self::command($event),
