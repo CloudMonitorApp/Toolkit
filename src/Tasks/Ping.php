@@ -14,22 +14,22 @@ class Ping
      */
     public static function before(Schedule $schedule): Closure
     {
-        $event = self::event($schedule);
+        return function() use($schedule) {
+            $event = self::event($schedule);
 
-        if (is_null($event->output) || $event->output == $event->getDefaultOutput()) {
-            $event->sendOutputTo(storage_path('logs/schedule-'.sha1($event->mutexName()).'.log'));
-        }
+            if (is_null($event->output) || $event->output == $event->getDefaultOutput()) {
+                $event->sendOutputTo(storage_path('logs/schedule-'.sha1($event->mutexName()).'.log'));
+            }
 
-        Webhook::send('task', json_encode([
-            'data' => [
-                'command' => self::command($event),
-                'cron' => $event->expression,
-                'description' => $event->description,
-            ],
-            'event' => 'before',
-        ]));
-
-        return function() {};
+            Webhook::send('task', json_encode([
+                'data' => [
+                    'command' => self::command($event),
+                    'cron' => $event->expression,
+                    'description' => $event->description,
+                ],
+                'event' => 'before',
+            ]));
+        };
     }
 
     /**
@@ -37,17 +37,19 @@ class Ping
      */
     public static function after(Schedule $schedule): Closure
     {
-        $event = self::event($schedule);
+        return function() use($schedule) {
+            $event = self::event($schedule);
 
-        Webhook::send('task', json_encode([
-            'data' => [
-                'command' => self::command($event),
-                'output' => @file_get_contents($event->output),
-            ],
-            'event' => $event->exitCode === 0 ? 'success' : 'failure',
-        ]));
+            Webhook::send('task', json_encode([
+                'data' => [
+                    'command' => self::command($event),
+                    'output' => $event->exitCode === 0 ? '' : @file_get_contents($event->output),
+                ],
+                'event' => $event->exitCode === 0 ? 'success' : 'failure',
+            ]));
+        };
 
-        return function() {};
+        #return function() {};
     }
 
     /**
