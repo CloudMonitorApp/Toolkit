@@ -42,7 +42,7 @@ class Ping
         Webhook::send('task', json_encode([
             'data' => [
                 'command' => self::command($event),
-                'output' => $event->exitCode === 0 ? '' : @file_get_contents($event->output),
+                'output' => @file_get_contents($event->output),
             ],
             'event' => $event->exitCode === 0 ? 'success' : 'failure',
         ]));
