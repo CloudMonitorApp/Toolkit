@@ -2,16 +2,17 @@
 
 namespace EmilMoe\CloudMonitor\Tasks;
 
+use \Closure;
 use EmilMoe\CloudMonitor\Webhook;
-use Illuminate\Console\Scheduling\Event
-use Illuminate\Console\Scheduling\Schedule
+use Illuminate\Console\Scheduling\Event;
+use Illuminate\Console\Scheduling\Schedule;
 
 class Ping
 {
     /**
      * 
      */
-    public static function before(Schedule $schedule): void
+    public static function before(Schedule $schedule): Closure
     {
         $event = self::event($schedule);
 
@@ -27,12 +28,14 @@ class Ping
             ],
             'event' => 'before',
         ]));
+
+        return function() {};
     }
 
     /**
      * 
      */
-    public static function after(Schedule $schedule): void
+    public static function after(Schedule $schedule): Closure
     {
         $event = self::event($schedule);
 
@@ -43,6 +46,8 @@ class Ping
             ],
             'event' => $event->exitCode === 0 ? 'success' : 'failure',
         ]));
+
+        return function() {};
     }
 
     /**
