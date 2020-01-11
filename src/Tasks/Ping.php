@@ -48,8 +48,6 @@ class Ping
                 'event' => $event->exitCode === 0 ? 'success' : 'failure',
             ]));
         };
-
-        #return function() {};
     }
 
     /**
@@ -57,7 +55,7 @@ class Ping
      */
     private static function event(Schedule $schedule): Event
     {
-        return $schedule->events()[0];
+        return $schedule->events()[count($schedule->events()) - 1];
     }
 
     /**
