@@ -17,9 +17,9 @@ class Ping
         $event = self::event($schedule);
 
         if (is_null($event->output) || $event->output == $event->getDefaultOutput()) {
-            $event->sendOutputTo(storage_path('logs/schedule-'.sha1($event->mutexName()).'.log');
+            $event->sendOutputTo(storage_path('logs/schedule-'.sha1($event->mutexName()).'.log'));
         }
-        
+
         Webhook::send('task', json_encode([
             'data' => [
                 'command' => self::command($event),
