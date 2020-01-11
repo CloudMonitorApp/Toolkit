@@ -55,7 +55,7 @@ class Ping
      */
     private static function event(Schedule $schedule): Event
     {
-        return $schedule->events()[$schedule->events()) - 1];
+        return $schedule->events()[count($schedule->events()) - 1];
     }
 
     /**
