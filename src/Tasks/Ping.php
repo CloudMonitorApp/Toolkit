@@ -12,46 +12,52 @@ class Ping
     /**
      * 
      */
-    public static function before(Schedule $schedule): void
+    public static function before(string $command, Schedule $schedule): Closure
     {
-        $event = self::event($schedule);
+        return function() use($command, $schedule) {
+            $event = self::event($command, $schedule);
 
-        if (is_null($event->output) || $event->output == $event->getDefaultOutput()) {
-            $event->sendOutputTo(storage_path('logs/schedule-'.sha1($event->mutexName()).'.log'));
-        }
+            if (is_null($event->output) || $event->output == $event->getDefaultOutput()) {
+                $event->sendOutputTo(storage_path('logs/schedule-'.sha1($event->mutexName()).'.log'));
+            }
 
-        Webhook::send('task', json_encode([
-            'data' => [
-                'command' => self::command($event),
-                'cron' => $event->expression,
-                'description' => $event->description,
-            ],
-            'event' => 'before',
-        ]));
+            Webhook::send('task', json_encode([
+                'data' => [
+                    'command' => self::command($event),
+                    'cron' => $event->expression,
+                    'description' => $event->description,
+                ],
+                'event' => 'before',
+            ]));
+        };
     }
 
     /**
      * 
      */
-    public static function after(Schedule $schedule): void
+    public static function after(string $command, Schedule $schedule): Closure
     {
-        $event = self::event($schedule);
+        return function() use($command, $schedule) {
+            $event = self::event($command, $schedule);
 
-        Webhook::send('task', json_encode([
-            'data' => [
-                'command' => self::command($event),
-                'output' => $event->exitCode === 0 ? '' : @file_get_contents($event->output),
-            ],
-            'event' => $event->exitCode === 0 ? 'success' : 'failure',
-        ]));
+            Webhook::send('task', json_encode([
+                'data' => [
+                    'command' => $command,
+                    'output' => file_get_contents($event->output),
+                ],
+                'event' => $event->exitCode === 0 ? 'success' : 'failure',
+            ]));
+        };
     }
 
     /**
      * 
      */
-    private static function event(Schedule $schedule): Event
+    private static function event(string $command, Schedule $schedule): Event
     {
-        return $schedule->events()[count($schedule->events()) - 1];
+       return collect($schedule->events())->first(function($event) use ($command) {
+            return $command === self::command($event);
+        });
     }
 
     /**
