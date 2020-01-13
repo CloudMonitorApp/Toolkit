@@ -53,7 +53,7 @@ class LogHandler extends AbstractProcessingHandler
     {
         return [
             'ip' => Request::ip(),
-            'user_agent' => Request::userAgent(),
+            'user_agent' => getenv('HTTP_USER_AGENT'),
             'user_id' => auth()->check() ? auth()->id() : null,
             'user' => auth()->check() ? auth()->user()->toJson() : null,
             'session' => Request::hasSession() ? Request::session()->all() : '',
