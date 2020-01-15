@@ -10,7 +10,10 @@ use Illuminate\Console\Scheduling\Schedule;
 class Ping
 {
     /**
-     * 
+     * [before description]
+     * @param  string   $command  [description]
+     * @param  Schedule $schedule [description]
+     * @return [type]             [description]
      */
     public static function before(string $command, Schedule $schedule): Closure
     {
@@ -25,7 +28,7 @@ class Ping
                 'data' => [
                     'command' => self::command($event),
                     'cron' => $event->expression,
-                    'description' => $event->description,
+                    'description' => self::description($command),
                 ],
                 'event' => 'before',
             ]));
@@ -33,7 +36,10 @@ class Ping
     }
 
     /**
-     * 
+     * [after description]
+     * @param  string   $command  [description]
+     * @param  Schedule $schedule [description]
+     * @return [type]             [description]
      */
     public static function after(string $command, Schedule $schedule): Closure
     {
@@ -51,7 +57,10 @@ class Ping
     }
 
     /**
-     * 
+     * [event description]
+     * @param  string   $command  [description]
+     * @param  Schedule $schedule [description]
+     * @return [type]             [description]
      */
     private static function event(string $command, Schedule $schedule): Event
     {
@@ -61,10 +70,33 @@ class Ping
     }
 
     /**
-     * 
+     * [command description]
+     * @param  Event  $event [description]
+     * @return [type]        [description]
      */
     private static function command(Event $event): string
     {
         return substr($event->command, stripos($event->command, "'artisan'") + strlen("'artisan' "));
+    }
+
+    /**
+     * [description description]
+     * @param  string $command [description]
+     * @return [type]          [description]
+     */
+    private static function description(string $command): ?string
+    {
+        $commands = app()->make(\Illuminate\Contracts\Console\Kernel::class)->all();
+
+        if (! isset($commands[$command])) {
+            return null;
+        }
+        try {
+            $className = get_class($commands[$command]);
+            $reflection = new \ReflectionClass($className);
+            return (string)$reflection->getDefaultProperties()['description'];
+        } catch (\ReflectionException $exception) {
+            return null;
+        }
     }
 }
