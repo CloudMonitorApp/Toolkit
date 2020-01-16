@@ -26,7 +26,7 @@ class Ping
 
             Webhook::send('task', json_encode([
                 'data' => [
-                    'command' => self::command($event),
+                    'command' => $command,
                     'cron' => $event->expression,
                     'description' => self::description($command),
                 ],
