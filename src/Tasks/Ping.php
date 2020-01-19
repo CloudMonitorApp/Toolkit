@@ -76,7 +76,8 @@ class Ping
      */
     private static function command(Event $event): string
     {
-        return substr($event->command, stripos($event->command, "'artisan'") + strlen("'artisan' "));
+        $cmd = str_replace('"', "'", $event->command);
+        return substr($cmd, stripos($cmd, "'artisan'") + strlen("'artisan' "));
     }
 
     /**
