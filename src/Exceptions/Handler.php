@@ -40,7 +40,7 @@ class Handler extends ExceptionHandler
     {
         return [
             'ip' => Request::ip(),
-            'user_agent' => $_SERVER['HTTP_USER_AGENT'],
+            'user_agent' => Request::header('User-Agent'),
             'user_id' => auth()->check() ? auth()->id() : null,
             'user' => auth()->check() ? auth()->user()->toJson() : null,
             'session' => $_SESSION ?? null,
