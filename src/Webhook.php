@@ -23,7 +23,7 @@ class Webhook
         try {
             $response = $client->request(
                 'POST',
-                'https://cloudmonitor.dk/api/hooks/'. $endpoint,
+                'https://api.cloudmonitor.dk/hooks/'. $endpoint,
                 [
                     'headers' => [
                         'timestamp' => $timestamp,
