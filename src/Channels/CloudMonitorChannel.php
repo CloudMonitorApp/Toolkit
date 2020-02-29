@@ -2,7 +2,7 @@
 
 namespace EmilMoe\CloudMonitor\Channels;
 
-use App\Exceptions\WebHookFailedException;
+use EmilMoe\CloudMonitorToolkit\Exceptions\WebHookFailedException;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\ClientException;
 use GuzzleHttp\Exception\GuzzleException;
