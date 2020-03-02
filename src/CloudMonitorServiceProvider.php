@@ -28,6 +28,12 @@ class CloudMonitorServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        //
+        $this->mergeConfigFrom(
+            __DIR__.'/config.php', 'cloudmonitor'
+        );
+
+        $this->publishes([
+            __DIR__ .'/config.php' => config_path('cloudmonitor.php'),
+        ]);
     }
 }

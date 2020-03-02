@@ -12,6 +12,12 @@ class Handler extends ExceptionHandler
 {
     public function report(Exception $e)
     {
+        foreach(config('cloudmonitor.exceptions.ignore') as $class) {
+            if ($e instanceof $class) {
+                return;
+            }
+        }
+
         parent::report($e);
         Webhook::send('error', $this->getData($e));
     }
