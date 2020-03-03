@@ -35,5 +35,7 @@ class CloudMonitorServiceProvider extends ServiceProvider
         $this->publishes([
             __DIR__ .'/config.php' => config_path('cloudmonitor.php'),
         ]);
+
+        $this->loadRoutesFrom(__DIR__.'/routes/web.php');
     }
 }
