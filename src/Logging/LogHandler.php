@@ -71,7 +71,7 @@ class LogHandler extends AbstractProcessingHandler
                 'function' => $trace['function'],
                 'class' => $trace['class'] ?? null,
                 'type' => $trace['type'] ?? null,
-                'args' => $trace['args'],
+                'args' => $trace['args'] ?? null,
                 'preview' => isset($trace['file'], $trace['line']) ? $this->getPreview($trace['file'], $trace['line']) : null,
             ];
         })->toArray();
