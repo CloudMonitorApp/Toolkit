@@ -29,6 +29,8 @@ window.onerror = function (messageOrEvent, source, lineno, colno, error) {
             ___guid = window.onerror___guid || (window.onerror___guid = (new Date().getTime() + '-' + new Date().getTime())), //a guidto for the error script element id
             //create a new function if none exists with the unique id
             ___logError = function (params) {
+                var xhttp = new XMLHttpRequest();
+                
                 xhttp.open('POST', '/cloudmonitor', true);
                 xhttp.send(params);
 
