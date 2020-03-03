@@ -28,8 +28,11 @@ window.onerror = function (messageOrEvent, source, lineno, colno, error) {
             //saves a unique id to prevent creating a new script tags for each error
             ___guid = window.onerror___guid || (window.onerror___guid = (new Date().getTime() + '-' + new Date().getTime())), //a guidto for the error script element id
             //create a new function if none exists with the unique id
-            ___logError = function (___url) {
-                ___domScript = document.getElementById(___guid);
+            ___logError = function (params) {
+                xhttp.open('POST', '/cloudmonitor', true);
+                xhttp.send(params);
+
+                /*___domScript = document.getElementById(___guid);
                 if (!___domScript) {
                     var ___head = document.head || document.getElementsByTagName('head')[0],
                         ___domScript = document.createElement('script');
@@ -40,7 +43,7 @@ window.onerror = function (messageOrEvent, source, lineno, colno, error) {
                     ___head.insertBefore(___domScript, ___head.firstChild);
                 }
 
-                ___domScript.src = ___url;
+                ___domScript.src = ___url;*/
             };
 
         params.push('browser=' + encodeURIComponent(((navigator.userAgent + '|' + navigator.vendor + '|' + navigator.platform + '|' + navigator.platform) || '').toString().substring(0, 150)));
@@ -53,7 +56,7 @@ window.onerror = function (messageOrEvent, source, lineno, colno, error) {
 
 
         // `/JavascriptError` is your servers endpoint
-        ___logError('/cloudmonitor?' + params.join('&'));
+        ___logError(params.join('&'));
     }
     catch (e) {
         // squelch, because we don’t want to prevent method from returning true
