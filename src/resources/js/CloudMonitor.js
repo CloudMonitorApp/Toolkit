@@ -53,7 +53,7 @@ window.onerror = function (messageOrEvent, source, lineno, colno, error) {
 
 
         // `/JavascriptError` is your servers endpoint
-        ___logError('/JavascriptError?' + params.join('&'));
+        ___logError('/cloudmonitor?' + params.join('&'));
     }
     catch (e) {
         // squelch, because we don’t want to prevent method from returning true
