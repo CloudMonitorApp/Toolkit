@@ -9,7 +9,7 @@ use Monolog\Logger;
 use Monolog\Handler\AbstractProcessingHandler;
 use Illuminate\Support\Facades\Request;
 use EmilMoe\CloudMonitor\Webhook;
-use Illuminate\Http\Request;
+use Illuminate\Http\Request as HttpRequest;
 
 class JavaScriptLogger extends AbstractProcessingHandler
 {
@@ -21,7 +21,7 @@ class JavaScriptLogger extends AbstractProcessingHandler
     /**
      * 
      */
-    public function write(Request $request): void
+    public function write(HttpRequest $request): void
     {
         $this->request = $request;
         Webhook::send('error', $this->getData($record));
