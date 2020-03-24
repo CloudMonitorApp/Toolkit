@@ -2,50 +2,45 @@
 
 namespace EmilMoe\CloudMonitor\Logging;
 
-use App\Log;
-use Monolog\Formatter\FormatterInterface;
-use Exception;
-use Monolog\Logger;
-use Monolog\Handler\AbstractProcessingHandler;
 use Illuminate\Support\Facades\Request;
 use EmilMoe\CloudMonitor\Webhook;
 use Illuminate\Http\Request as HttpRequest;
 
-class JavaScriptLogger extends AbstractProcessingHandler
+class JavaScriptLogger
 {
-    /**
-     * @var Request
-     */
-    private $request;
-
     /**
      * 
      */
     public function write(HttpRequest $request): void
     {
-        $this->request = $request;
-        Webhook::send('error', $this->getData($record));
+        Webhook::send(
+            'error',
+            [
+                'app' => $this->getApp($request),
+                'incident' => $this->getIncident($request),
+                'trace' => $this->getTrace($request),
+            ]
+        );
     }
 
     /**
      * 
      */
-    private function getApp(): array
+    private function getApp(HttpRequest $request): array
     {
         return [
             'type' => 'javascript',
-            'message' => $this->request->input('message'),
-            'line' => $this->request->input('line'),
-            'file' => '',
+            'message' => $request->input('error'),
+            'line' => $request->input('line'),
+            'file' => $request->input('file') ?? '',
             'severity' => '',
             'level' => '',
             'code' => '',
-            'class' => '',
-            'original_class' => '',
-            'method' => $this->request->input('method'),
-            'previous' => $e->getPrevious() ?? '',
-            'preview' => $this->getPreview($e->getFile(), $e->getLine()),
-            'url' => $this->request->input('url'),
+            'class' => $request->input('msg'),
+            'method' => '',
+            'previous' => '',
+            'preview' => '',
+            'url' => $request->input('url'),
             'stage' => env('APP_ENV', 'unknown APP_ENV'),
         ];
     }
@@ -53,11 +48,11 @@ class JavaScriptLogger extends AbstractProcessingHandler
     /**
      * 
      */
-    private function getIncident(): array
+    private function getIncident(HttpRequest $request): array
     {
         return [
             'ip' => Request::ip(),
-            'user_agent' => Request::userAgent(),
+            'user_agent' => $request->input('user_agent'),
             'user_id' => auth()->check() ? auth()->id() : null,
             'user' => auth()->check() ? auth()->user()->toJson() : null,
             'session' => Request::hasSession() ? Request::session()->all() : '',
@@ -65,35 +60,23 @@ class JavaScriptLogger extends AbstractProcessingHandler
         ];
     }
 
-    private function getTrace(Exception $e): array
+    /**
+     * 
+     */
+    private function getTrace(HttpRequest $request): array
     {
-        return collect($e->getTrace())->map(function ($trace, $index) {
+        return collect(json_decode($request->input('trace')))->map(function($trace, $index) {
             return [
                 'stack_key' => $index,
-                'file' => str_ireplace(base_path(), '', $trace['file'] ?? null) ?? null,
-                'line' => $trace['line'] ?? null,
-                'function' => $trace['function'],
-                'class' => $trace['class'] ?? null,
-                'type' => $trace['type'] ?? null,
-                'args' => $trace['args'],
-                'preview' => isset($trace['file'], $trace['line']) ? $this->getPreview($trace['file'], $trace['line']) : null,
+                'line' => $trace->lineNumber,
+                'preview' => explode(PHP_EOL, $trace->source),
+                'file' => '',
+                'function' => '',
+                'class' => '',
+                'type' => '',
+                'args' => '',
             ];
         })->toArray();
-    }
-
-    /**
-     * @param Exception $e
-     * @return string
-     */
-    private function getData(array $e): string
-    {
-        return json_encode(
-            [
-                'app' => $this->getApp($e['context']['exception']),
-                'incident' => $this->getIncident(),
-                'trace' => $this->getTrace($e['context']['exception']),
-            ]
-        );
     }
 
     /**

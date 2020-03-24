@@ -4,45 +4,72 @@ namespace EmilMoe\CloudMonitor\Exceptions;
 
 use App\Exceptions\Handler as ExceptionHandler;
 use Exception;
+use Throwable;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Request;
 use EmilMoe\CloudMonitor\Webhook;
 
 class Handler extends ExceptionHandler
 {
-    public function report(Exception $e)
+    /**
+     * Report unhandled exceptions.
+     * Ignored exception from config will not be reported.
+     */
+    public function report(Throwable $t): void
     {
-        foreach(config('cloudmonitor.exceptions.ignore') as $class) {
-            if ($e instanceof $class) {
-                return;
-            }
+        if($this->isIgnored($t)) {
+            return;
         }
 
-        parent::report($e);
-        Webhook::send('error', $this->getData($e));
+        parent::report($t);
+        
+        Webhook::send(
+            'error',
+            [
+                'app' => $this->getApp($t),
+                'incident' => $this->getIncident($t),
+                'trace' => $this->getTrace($t),
+            ]
+        );
     }
 
-    private function getApp(Exception $e): array
+    /**
+     * Check if reported exception should be ignored.
+     * 
+     * @param Throwable $t
+     * @return bool
+     */
+    private function isIgnored(Throwable $t): bool
+    {
+        return collect(config('cloudmonitor.exceptions.ignore'))->contains(function(string $class) use($t) {
+            return $t instanceof $class;
+        });
+    }
+
+    /**
+     * 
+     */
+    private function getApp(Throwable $t): array
     {
         return [
             'type' => 'php',
-            'message' => $e->getMessage() ?? '',
-            'line' => $e->getLine() ?? '',
-            'file' => str_ireplace(base_path(), '', $e->getFile()) ?? '',
-            'severity' => $e instanceof \Exception ? 0 : $e->getSeverity() ?? '',
+            'message' => $t->getMessage() ?? '',
+            'line' => $t->getLine() ?? '',
+            'file' => str_ireplace(base_path(), '', $t->getFile()) ?? '',
+            'severity' => method_exists($t, 'getSeverity') ? $t->getSeverity() : '',
             'level' => '',
-            'code' => $e->getCode() ?? '',
-            'class' => get_class($e) ?? '',
-            'original_class' => $e instanceof \Exception ? 'Exception' : $e->getOriginalClassName() ?? '',
+            'code' => $t->getCode() ?? '',
+            'class' => get_class($t) ?? '',
+            #'original_class' => $t instanceof \Exception ? 'Exception' : $t->getOriginalClassName() ?? '',
             'method' => Request::method(),
-            'previous' => $e->getPrevious() ?? '',
-            'preview' => $this->getPreview($e->getFile(), $e->getLine()),
-            'url' => url()->full(),
+            'previous' => $t->getPrevious() ?? '',
+            'preview' => $this->getPreview($t->getFile(), $t->getLine()),
+            'url' => app()->runningInConsole() ? 'Console' : url()->full(),
             'stage' => env('APP_ENV', 'unknown APP_ENV'),
         ];
     }
 
-    private function getIncident(Exception $e): array
+    private function getIncident(Throwable $e): array
     {
         return [
             'ip' => Request::ip(),
@@ -54,7 +81,7 @@ class Handler extends ExceptionHandler
         ];
     }
 
-    private function getTrace(Exception $e): array
+    private function getTrace(Throwable $e): array
     {
         return collect($e->getTrace())->map(function ($trace, $index) {
             return [
@@ -68,21 +95,6 @@ class Handler extends ExceptionHandler
                 'preview' => isset($trace['file'], $trace['line']) ? $this->getPreview($trace['file'], $trace['line']) : null,
             ];
         })->toArray();
-    }
-
-    /**
-     * @param Exception $e
-     * @return string
-     */
-    private function getData(Exception $e): string
-    {
-        return json_encode(
-            [
-                'app' => $this->getApp($e),
-                'incident' => $this->getIncident($e),
-                'trace' => $this->getTrace($e),
-            ]
-        );
     }
 
     /**

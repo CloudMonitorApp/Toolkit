@@ -4,6 +4,8 @@ namespace EmilMoe\CloudMonitor;
 
 use Illuminate\Support\ServiceProvider;
 use EmilMoe\CloudMonitor\Exceptions\Handler;
+use EmilMoe\CloudMonitor\Console\Commands\TestException;
+use EmilMoe\CloudMonitor\Console\Commands\TestError;
 use Illuminate\Contracts\Debug\ExceptionHandler;
 
 class CloudMonitorServiceProvider extends ServiceProvider
@@ -37,5 +39,12 @@ class CloudMonitorServiceProvider extends ServiceProvider
         ]);
 
         $this->loadRoutesFrom(__DIR__.'/routes/web.php');
+
+        if ($this->app->runningInConsole()) {
+            $this->commands([
+                TestException::class,
+                TestError::class,
+            ]);
+        }
     }
 }

@@ -2,7 +2,7 @@
 
 namespace EmilMoe\CloudMonitor\Tasks;
 
-use \Closure;
+use Closure;
 use EmilMoe\CloudMonitor\Webhook;
 use Illuminate\Console\Scheduling\Event;
 use Illuminate\Console\Scheduling\Schedule;
@@ -10,10 +10,11 @@ use Illuminate\Console\Scheduling\Schedule;
 class Ping
 {
     /**
-     * [before description]
-     * @param  string   $command  [description]
-     * @param  Schedule $schedule [description]
-     * @return [type]             [description]
+     * Register when a task is beginning.
+     * 
+     * @param string $command
+     * @param Schedule $schedule
+     * @return Closure
      */
     public static function before(string $command, Schedule $schedule): Closure
     {
@@ -36,10 +37,11 @@ class Ping
     }
 
     /**
-     * [after description]
-     * @param  string   $command  [description]
-     * @param  Schedule $schedule [description]
-     * @return [type]             [description]
+     * Register when a task is ended.
+     * 
+     * @param string $command
+     * @param Schedule $schedule
+     * @return Closure
      */
     public static function after(string $command, Schedule $schedule): Closure
     {
