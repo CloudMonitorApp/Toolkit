@@ -15,7 +15,7 @@ class Handler extends ExceptionHandler
      * Report unhandled exceptions.
      * Ignored exception from config will not be reported.
      */
-    public function report(Throwable $t): void
+    public function report(Throwable $t)
     {
         if($this->isIgnored($t)) {
             return;
