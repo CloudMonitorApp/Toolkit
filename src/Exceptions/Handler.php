@@ -3,11 +3,10 @@
 namespace EmilMoe\CloudMonitor\Exceptions;
 
 use App\Exceptions\Handler as ExceptionHandler;
-use Exception;
-use Throwable;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Request;
 use EmilMoe\CloudMonitor\Webhook;
+use Throwable;
 
 class Handler extends ExceptionHandler
 {
@@ -15,20 +14,20 @@ class Handler extends ExceptionHandler
      * Report unhandled exceptions.
      * Ignored exception from config will not be reported.
      */
-    public function report(Throwable $t)
+    public function report(Throwable $exception)
     {
-        if($this->isIgnored($t)) {
+        parent::report($exception);
+
+        if($this->isIgnored($exception)) {
             return;
         }
-
-        parent::report($t);
         
         Webhook::send(
             'error',
             [
-                'app' => $this->getApp($t),
-                'incident' => $this->getIncident($t),
-                'trace' => $this->getTrace($t),
+                'app' => $this->getApp($exception),
+                'incident' => $this->getIncident($exception),
+                'trace' => $this->getTrace($exception),
             ]
         );
     }
