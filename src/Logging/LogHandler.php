@@ -12,13 +12,22 @@ use EmilMoe\CloudMonitor\Webhook;
 
 class LogHandler extends AbstractProcessingHandler
 {
+    /**
+     * 
+     */
     private $error;
 
+    /**
+     * 
+     */
     public function __construct($level = Logger::DEBUG)
     {
         parent::__construct($level);
     }
 
+    /**
+     * 
+     */
     protected function write(array $record): void
     {
         if (! isset($record['context']['exception'])) {
@@ -29,13 +38,16 @@ class LogHandler extends AbstractProcessingHandler
         Webhook::send(
             'error',
             [
-                'app' => $this->getApp($e['context']['exception']),
+                'app' => $this->getApp($record['context']['exception']),
                 'incident' => $this->getIncident(),
-                'trace' => $this->getTrace($e['context']['exception']),
+                'trace' => $this->getTrace($record['context']['exception']),
             ]
         );
     }
 
+    /**
+     * 
+     */
     private function getApp(Exception $e): array
     {
         return [
@@ -56,6 +68,9 @@ class LogHandler extends AbstractProcessingHandler
         ];
     }
 
+    /**
+     * 
+     */
     private function getIncident(): array
     {
         return [
@@ -68,6 +83,9 @@ class LogHandler extends AbstractProcessingHandler
         ];
     }
 
+    /**
+     * 
+     */
     private function getTrace(Exception $e): array
     {
         return collect($e->getTrace())->map(function ($trace, $index) {
