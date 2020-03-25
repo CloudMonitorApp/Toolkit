@@ -26,13 +26,20 @@ class LogHandler extends AbstractProcessingHandler
         }
 
         $this->error = $record;
-        Webhook::send('error', $this->getData($record));
+        Webhook::send(
+            'error',
+            [
+                'app' => $this->getApp($e['context']['exception']),
+                'incident' => $this->getIncident(),
+                'trace' => $this->getTrace($e['context']['exception']),
+            ]
+        );
     }
 
     private function getApp(Exception $e): array
     {
         return [
-            'type' => 'php',
+            'type' => 'log',
             'message' => $e->getMessage() ?? '',
             'line' => $e->getLine() ?? '',
             'file' => str_ireplace(base_path(), '', $e->getFile()) ?? '',
@@ -75,21 +82,6 @@ class LogHandler extends AbstractProcessingHandler
                 'preview' => isset($trace['file'], $trace['line']) ? $this->getPreview($trace['file'], $trace['line']) : null,
             ];
         })->toArray();
-    }
-
-    /**
-     * @param Exception $e
-     * @return string
-     */
-    private function getData(array $e): string
-    {
-        return json_encode(
-            [
-                'app' => $this->getApp($e['context']['exception']),
-                'incident' => $this->getIncident(),
-                'trace' => $this->getTrace($e['context']['exception']),
-            ]
-        );
     }
 
     /**

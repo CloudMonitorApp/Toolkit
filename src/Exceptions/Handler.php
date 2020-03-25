@@ -59,7 +59,6 @@ class Handler extends ExceptionHandler
             'level' => '',
             'code' => $t->getCode() ?? '',
             'class' => get_class($t) ?? '',
-            #'original_class' => $t instanceof \Exception ? 'Exception' : $t->getOriginalClassName() ?? '',
             'method' => Request::method(),
             'previous' => $t->getPrevious() ?? '',
             'preview' => $this->getPreview($t->getFile(), $t->getLine()),
