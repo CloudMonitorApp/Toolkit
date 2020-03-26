@@ -25,14 +25,17 @@ class Ping
                 $event->sendOutputTo(storage_path('logs/schedule-'.sha1($event->mutexName()).'.log'));
             }
 
-            Webhook::send('task', json_encode([
-                'data' => [
-                    'command' => $command,
-                    'cron' => $event->expression,
-                    'description' => self::description($command),
-                ],
-                'event' => 'before',
-            ]));
+            Webhook::send(
+                'task',
+                [
+                    'data' => [
+                        'command' => $command,
+                        'cron' => $event->expression,
+                        'description' => self::description($command),
+                    ],
+                    'event' => 'before',
+                ]
+            );
         };
     }
 
@@ -48,13 +51,16 @@ class Ping
         return function() use($command, $schedule) {
             $event = self::event($command, $schedule);
 
-            Webhook::send('task', json_encode([
-                'data' => [
-                    'command' => $command,
-                    'output' => file_get_contents($event->output),
-                ],
-                'event' => $event->exitCode === 0 ? 'success' : 'failure',
-            ]));
+            Webhook::send(
+                'task',
+                [
+                    'data' => [
+                        'command' => $command,
+                        'output' => file_get_contents($event->output),
+                    ],
+                    'event' => $event->exitCode === 0 ? 'success' : 'failure',
+                ]
+            );
         };
     }
 
