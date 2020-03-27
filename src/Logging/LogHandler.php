@@ -48,7 +48,7 @@ class LogHandler extends AbstractProcessingHandler
     /**
      * 
      */
-    private function getApp(Exception $e): array
+    private function getApp($e): array
     {
         return [
             'type' => 'log',
@@ -86,7 +86,7 @@ class LogHandler extends AbstractProcessingHandler
     /**
      * 
      */
-    private function getTrace(Exception $e): array
+    private function getTrace($e): array
     {
         return collect($e->getTrace())->map(function ($trace, $index) {
             return [
