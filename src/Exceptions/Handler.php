@@ -6,7 +6,7 @@ use App\Exceptions\Handler as ExceptionHandler;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Request;
 use EmilMoe\CloudMonitor\Webhook;
-use Throwable;
+use Exception;
 
 class Handler extends ExceptionHandler
 {
@@ -14,7 +14,7 @@ class Handler extends ExceptionHandler
      * Report unhandled exceptions.
      * Ignored exception from config will not be reported.
      */
-    public function report(Throwable $exception)
+    public function report(Exception $exception)
     {
         parent::report($exception);
 
@@ -35,10 +35,10 @@ class Handler extends ExceptionHandler
     /**
      * Check if reported exception should be ignored.
      * 
-     * @param Throwable $t
+     * @param Exception $t
      * @return bool
      */
-    private function isIgnored(Throwable $t): bool
+    private function isIgnored(Exception $t): bool
     {
         return collect(config('cloudmonitor.exceptions.ignore'))->contains(function(string $class) use($t) {
             return $t instanceof $class;
@@ -48,7 +48,7 @@ class Handler extends ExceptionHandler
     /**
      * 
      */
-    private function getApp(Throwable $t): array
+    private function getApp(Exception $t): array
     {
         return [
             'type' => 'php',
@@ -67,7 +67,7 @@ class Handler extends ExceptionHandler
         ];
     }
 
-    private function getIncident(Throwable $e): array
+    private function getIncident(Exception $e): array
     {
         return [
             'ip' => Request::ip(),
@@ -79,7 +79,7 @@ class Handler extends ExceptionHandler
         ];
     }
 
-    private function getTrace(Throwable $e): array
+    private function getTrace(Exception $e): array
     {
         return collect($e->getTrace())->map(function ($trace, $index) {
             return [
