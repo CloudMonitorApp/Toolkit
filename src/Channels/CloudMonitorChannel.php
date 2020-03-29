@@ -39,6 +39,10 @@ class CloudMonitorChannel extends BaseNotification
      */
     public function dispatch($notifiable, Notification $notification, string $event, int $code)
     {
+        if (env('CLOUDMONITOR_KEY', null) === null || env('CLOUDMONITOR_SECRET', null) === null) {
+            return null;
+        }
+
         $timestamp = now()->timestamp;
 
         try {

@@ -33,8 +33,12 @@ class Webhook
      * @param array $data
      * @throws Exception
      */
-    public static function send(string $endpoint, array $data): Response
+    public static function send(string $endpoint, array $data): ?Response
     {
+        if (env('CLOUDMONITOR_KEY', null) === null || env('CLOUDMONITOR_SECRET', null) === null) {
+            return null;
+        }
+
         $client = new Client();
         $response = null;
 
