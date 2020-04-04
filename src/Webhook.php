@@ -4,11 +4,10 @@ namespace EmilMoe\CloudMonitor;
 
 use Exception;
 use GuzzleHttp\Client;
-use GuzzleHttp\Exception\ClientException;
-use GuzzleHttp\Exception\ServerException;
+use GuzzleHttp\Psr7\Response;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Encryption\Encrypter;
-use GuzzleHttp\Psr7\Response;
+use App\Exceptions\WebHookFailedException;
 
 class Webhook
 {
@@ -17,7 +16,7 @@ class Webhook
      * 
      * @var string
      */
-    const BASE_URL = 'https://api.cloudmonitor.dk/hooks/';
+    const BASE_URL = 'https://api.cloudmonitor.dk/';
 
     /**
      * Version string.

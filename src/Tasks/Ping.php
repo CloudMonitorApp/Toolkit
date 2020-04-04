@@ -72,7 +72,7 @@ class Ping
      */
     private static function event(string $command, Schedule $schedule): Event
     {
-       return collect($schedule->events())->first(function($event) use ($command) {
+        return collect($schedule->events())->first(function($event) use ($command) {
             return $command === self::command($event);
         });
     }
