@@ -47,8 +47,10 @@ class TestTask extends Command
             $schedule->command($this->argument('task'))->daily();
         });
         
-        Ping::before($this->argument('task'), $schedule)();
-        Artisan::call($this->argument('task'));
+        $file = Ping::before($this->argument('task'), $schedule)();
+        file_put_contents($file, 'Test  run');
         Ping::after($this->argument('task'), $schedule)();
+
+        $this->line('Done');
     }
 }

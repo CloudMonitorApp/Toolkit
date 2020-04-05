@@ -5,8 +5,8 @@ namespace EmilMoe\CloudMonitor;
 use Exception;
 use GuzzleHttp\Client;
 use GuzzleHttp\Psr7\Response;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Encryption\Encrypter;
+use GuzzleHttp\Exception\ClientException;
 use App\Exceptions\WebHookFailedException;
 
 class Webhook
@@ -65,9 +65,10 @@ class Webhook
                 throw new WebHookFailedException('Webhook received a non 200 response');
             }
 
-        } catch (Exception $exception) {
-            Log::error($exception->getMessage());
-            dd($exception);
+        } catch (ClientException $e) {
+            dd('Error: '. $e->getResponse()->getHeaders()['x-error'][0]);
+        } catch (Exception $e) {
+            dd($e);
         }
 
         return $response;

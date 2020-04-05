@@ -20,9 +20,11 @@ class Ping
     {
         return function() use($command, $schedule) {
             $event = self::event($command, $schedule);
+            $log = storage_path('logs/schedule-'.sha1($event->mutexName()).'.log');
 
             if (is_null($event->output) || $event->output == $event->getDefaultOutput()) {
-                $event->sendOutputTo(storage_path('logs/schedule-'.sha1($event->mutexName()).'.log'));
+                $log = storage_path('logs/schedule-'.sha1($event->mutexName()).'.log');
+                $event->sendOutputTo($log);
             }
 
             Webhook::send(
@@ -36,6 +38,8 @@ class Ping
                     'event' => 'before',
                 ]
             );
+
+            return $log;
         };
     }
 
@@ -58,7 +62,7 @@ class Ping
                         'command' => $command,
                         'output' => file_get_contents($event->output),
                     ],
-                    'event' => $event->exitCode === 0 ? 'success' : 'failure',
+                    'event' => $event->exitCode === 0 || $event->exitCode === null ? 'success' : 'failure',
                 ]
             );
         };
