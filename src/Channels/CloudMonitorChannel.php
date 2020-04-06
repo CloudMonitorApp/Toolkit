@@ -53,6 +53,7 @@ class CloudMonitorChannel extends BaseNotification
                     'headers' => [
                         'timestamp' => $timestamp,
                         'token' => env('CLOUDMONITOR_KEY'),
+                        'version' => '1.0.0',
                         'signature' => hash_hmac(
                             'sha256',
                             env('CLOUDMONITOR_KEY') . $timestamp,

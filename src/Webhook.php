@@ -7,7 +7,7 @@ use GuzzleHttp\Client;
 use GuzzleHttp\Psr7\Response;
 use Illuminate\Encryption\Encrypter;
 use GuzzleHttp\Exception\ClientException;
-use App\Exceptions\WebHookFailedException;
+use EmilMoe\CloudMonitor\Exceptions\WebHookFailedException;
 
 class Webhook
 {
