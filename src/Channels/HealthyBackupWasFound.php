@@ -2,7 +2,7 @@
 
 namespace EmilMoe\CloudMonitor\Channels;
 
-use App\Exceptions\WebHookFailedException;
+use EmilMoe\CloudMonitor\Exceptions\WebHookFailedException;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Notifications\Notification;
 
