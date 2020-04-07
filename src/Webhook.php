@@ -12,18 +12,18 @@ use EmilMoe\CloudMonitor\Exceptions\WebHookFailedException;
 class Webhook
 {
     /**
-     * Base URL without event relatede endpoint.
-     * 
-     * @var string
-     */
-    const BASE_URL = 'https://api.cloudmonitor.dk/';
-
-    /**
      * Version string.
      * 
      * @var string
      */
     const VERSION = '1.0.1';
+
+    /**
+     * Base URL without event relatede endpoint.
+     * 
+     * @var string
+     */
+    private static $baseUrl;
 
     /**
      * Send event to CloudMonitor.
@@ -34,6 +34,8 @@ class Webhook
      */
     public static function send(string $endpoint, array $data): ?Response
     {
+        self::$baseUrl = env('CLOUDMONITOR_URL', 'https://api.cloudmonitor.dk/');
+
         if (env('CLOUDMONITOR_KEY', null) === null || env('CLOUDMONITOR_SECRET', null) === null) {
             return null;
         }
@@ -46,7 +48,7 @@ class Webhook
         try {
             $response = $client->request(
                 'POST',
-                self::BASE_URL . $endpoint,
+                self::$baseUrl . $endpoint,
                 [
                     'headers' => [
                         'timestamp' => $timestamp,
@@ -66,7 +68,11 @@ class Webhook
             }
 
         } catch (ClientException $e) {
-            dd('Error: '. $e->getResponse()->getHeaders()['x-error'][0]);
+            if($e->getResponse()->getStatusCode() === 400) {
+                dd('Error: '. $e->getResponse()->getHeaders()['x-error'][0]);
+            }
+
+            dd($e);
         } catch (Exception $e) {
             dd($e);
         }
