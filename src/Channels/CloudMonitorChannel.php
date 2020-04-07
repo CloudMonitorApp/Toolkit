@@ -2,15 +2,15 @@
 
 namespace EmilMoe\CloudMonitor\Channels;
 
-use EmilMoe\CloudMonitorToolkit\Exceptions\WebHookFailedException;
 use GuzzleHttp\Client;
-use GuzzleHttp\Exception\ClientException;
-use GuzzleHttp\Exception\GuzzleException;
 use Illuminate\Log\Logger;
 use Illuminate\Notifications\Notifiable;
+use GuzzleHttp\Exception\ClientException;
+use GuzzleHttp\Exception\GuzzleException;
 use Illuminate\Notifications\Notification;
-use Illuminate\Support\Str;
 use Spatie\Backup\Notifications\BaseNotification;
+use EmilMoe\CloudMonitor\Exceptions\WebHookFailedException;
+use EmilMoe\CloudMonitor\Webhook;
 
 class CloudMonitorChannel extends BaseNotification
 {
@@ -39,7 +39,15 @@ class CloudMonitorChannel extends BaseNotification
      */
     public function dispatch($notifiable, Notification $notification, string $event, int $code)
     {
-        if (env('CLOUDMONITOR_KEY', null) === null || env('CLOUDMONITOR_SECRET', null) === null) {
+        Webhook::send(
+            'backup',
+            [
+                'event' => $event,
+                'code' => $code,
+            ]
+        );
+
+        /*if (env('CLOUDMONITOR_KEY', null) === null || env('CLOUDMONITOR_SECRET', null) === null) {
             return null;
         }
 
@@ -82,6 +90,6 @@ class CloudMonitorChannel extends BaseNotification
             throw new WebHookFailedException($exception->getMessage(), $exception->getCode(), $exception);
         }
 
-        $this->logger->error('CloudMonitor failed in posting to '. env('CLOUDMONITOR_URL'));
+        $this->logger->error('CloudMonitor failed in posting to '. env('CLOUDMONITOR_URL'));*/
     }
 }
