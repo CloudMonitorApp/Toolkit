@@ -5,7 +5,6 @@ namespace EmilMoe\CloudMonitor\Console\Commands;
 use EmilMoe\CloudMonitor\Tasks\Ping;
 use Illuminate\Console\Command;
 use Illuminate\Console\Scheduling\Schedule;
-use Illuminate\Support\Facades\Artisan;
 
 class TestTask extends Command
 {
@@ -46,11 +45,10 @@ class TestTask extends Command
             $schedule = app()->make(Schedule::class);
             $schedule->command($this->argument('task'))->daily();
         });
-        
-        $file = Ping::before($this->argument('task'), $schedule)();
-        file_put_contents($file, 'Test  run');
-        Ping::after($this->argument('task'), $schedule)();
 
-        $this->line('Done');
+        $log = '';
+        Ping::before($this->argument('task'), $schedule, $log)();
+        file_put_contents($log, 'Test run');
+        Ping::after($this->argument('task'), $schedule)();
     }
 }

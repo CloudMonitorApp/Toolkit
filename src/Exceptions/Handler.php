@@ -3,7 +3,6 @@
 namespace EmilMoe\CloudMonitor\Exceptions;
 
 use App\Exceptions\Handler as ExceptionHandler;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Request;
 use EmilMoe\CloudMonitor\Webhook;
 use Throwable;
@@ -13,21 +12,30 @@ class Handler extends ExceptionHandler
     /**
      * Report unhandled exceptions.
      * Ignored exception from config will not be reported.
+     * 
+     * @param  Throwable $exception
      */
     public function report(Throwable $exception)
     {
         parent::report($exception);
+        Handler::dispatch($exception);
+    }
 
-        if($this->isIgnored($exception)) {
+    /**
+     * 
+     */
+    public static function dispatch(Throwable $exception)
+    {
+        if(self::isIgnored($exception)) {
             return;
         }
-        
+
         Webhook::send(
-            'error',
+            'issue',
             [
-                'app' => $this->getApp($exception),
-                'incident' => $this->getIncident($exception),
-                'trace' => $this->getTrace($exception),
+                'app' => self::getApp($exception),
+                'event' => self::getEvent($exception),
+                'trace' => self::getTrace($exception),
             ]
         );
     }
@@ -38,7 +46,7 @@ class Handler extends ExceptionHandler
      * @param Throwable $t
      * @return bool
      */
-    private function isIgnored(Throwable $t): bool
+    private static function isIgnored(Throwable $t): bool
     {
         return collect(config('cloudmonitor.exceptions.ignore'))->contains(function(string $class) use($t) {
             return $t instanceof $class;
@@ -48,7 +56,7 @@ class Handler extends ExceptionHandler
     /**
      * 
      */
-    private function getApp(Throwable $t): array
+    private static function getApp(Throwable $t): array
     {
         return [
             'type' => 'php',
@@ -61,13 +69,13 @@ class Handler extends ExceptionHandler
             'class' => get_class($t) ?? '',
             'method' => Request::method(),
             'previous' => $t->getPrevious() ?? '',
-            'preview' => $this->getPreview($t->getFile(), $t->getLine()),
+            'preview' => self::getPreview($t->getFile(), $t->getLine()),
             'url' => app()->runningInConsole() ? 'Console' : url()->full(),
             'stage' => env('APP_ENV', 'unknown APP_ENV'),
         ];
     }
 
-    private function getIncident(Throwable $e): array
+    private static function getEvent(Throwable $e): array
     {
         return [
             'ip' => Request::ip(),
@@ -79,7 +87,7 @@ class Handler extends ExceptionHandler
         ];
     }
 
-    private function getTrace(Throwable $e): array
+    private static function getTrace(Throwable $e): array
     {
         return collect($e->getTrace())->map(function ($trace, $index) {
             return [
@@ -90,7 +98,7 @@ class Handler extends ExceptionHandler
                 'class' => $trace['class'] ?? null,
                 'type' => $trace['type'] ?? null,
                 'args' => $trace['args'] ?? null,
-                'preview' => isset($trace['file'], $trace['line']) ? $this->getPreview($trace['file'], $trace['line']) : null,
+                'preview' => isset($trace['file'], $trace['line']) ? self::getPreview($trace['file'], $trace['line']) : null,
             ];
         })->toArray();
     }
@@ -102,7 +110,7 @@ class Handler extends ExceptionHandler
      * @param int $line
      * @return string
      */
-    private function getPreview(string $file, int $line): array
+    private static function getPreview(string $file, int $line): array
     {
         $file = explode(PHP_EOL, file_get_contents($file));
         array_unshift($file, '');

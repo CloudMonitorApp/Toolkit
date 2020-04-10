@@ -2,24 +2,23 @@
 
 namespace EmilMoe\CloudMonitor\Console\Commands;
 
-use Exception;
 use Illuminate\Console\Command;
 
-class TestException extends Command
+class TestBackup extends Command
 {
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $signature = 'cloudmonitor:exception';
+    protected $signature = 'cloudmonitor:backup';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Send test exception to CloudMonitor';
+    protected $description = 'Send test error to CloudMonitor';
 
     /**
      * Create a new command instance.
@@ -38,6 +37,6 @@ class TestException extends Command
      */
     public function handle()
     {
-        throw new Exception('Test exception ('. md5(time()));
+        // nothing
     }
 }

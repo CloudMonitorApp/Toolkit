@@ -37,6 +37,6 @@ class TestError extends Command
      */
     public function handle()
     {
-        trigger_error('Test error');
+        trigger_error('Test error: '. md5(time()));
     }
 }

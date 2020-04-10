@@ -7,6 +7,7 @@ use EmilMoe\CloudMonitor\Exceptions\Handler;
 use Illuminate\Contracts\Debug\ExceptionHandler;
 use EmilMoe\CloudMonitor\Console\Commands\TestTask;
 use EmilMoe\CloudMonitor\Console\Commands\TestError;
+use EmilMoe\CloudMonitor\Console\Commands\TestBackup;
 use EmilMoe\CloudMonitor\Console\Commands\TestException;
 
 class CloudMonitorServiceProvider extends ServiceProvider
@@ -46,6 +47,7 @@ class CloudMonitorServiceProvider extends ServiceProvider
                 TestException::class,
                 TestError::class,
                 TestTask::class,
+                TestBackup::class,
             ]);
         }
     }

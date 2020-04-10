@@ -7,7 +7,6 @@ use GuzzleHttp\Client;
 use GuzzleHttp\Psr7\Response;
 use Illuminate\Encryption\Encrypter;
 use GuzzleHttp\Exception\ClientException;
-use EmilMoe\CloudMonitor\Exceptions\WebHookFailedException;
 
 class Webhook
 {
@@ -16,7 +15,7 @@ class Webhook
      * 
      * @var string
      */
-    const VERSION = '1.0.1';
+    const VERSION = '1.0.2';
 
     /**
      * Base URL without event relatede endpoint.
@@ -55,21 +54,20 @@ class Webhook
                         'version' => self::VERSION,
                         'token' => env('CLOUDMONITOR_KEY'),
                         'signature' => self::makeSignature($timestamp),
+                        'installation' => env('CLOUDMONITOR_INSTALLATION', null),
                     ],
                     'form_params' => [
-                        'installation' => env('CLOUDMONITOR_INSTALLATION', null),
                         'data' => self::encrypt(json_encode($data))
                     ]
                 ]
             );
 
-            if ($response->getStatusCode() !== 200) {
-                throw new WebHookFailedException('Webhook received a non 200 response');
+            if ($response->hasHeader('x-success')) {
+                print('Job processed with success: '. self::$baseUrl . $endpoint . PHP_EOL);
             }
-
         } catch (ClientException $e) {
             if($e->getResponse()->getStatusCode() === 400) {
-                dd('Error: '. $e->getResponse()->getHeaders()['x-error'][0]);
+                dd($e->getResponse()->getHeaders()['x-error'][0]);
             }
 
             dd($e);

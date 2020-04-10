@@ -16,9 +16,9 @@ class Ping
      * @param Schedule $schedule
      * @return Closure
      */
-    public static function before(string $command, Schedule $schedule): Closure
+    public static function before(string $command, Schedule $schedule, &$log): Closure
     {
-        return function() use($command, $schedule) {
+        return function() use($command, $schedule, &$log) {
             $event = self::event($command, $schedule);
             $log = storage_path('logs/schedule-'.sha1($event->mutexName()).'.log');
 
@@ -30,16 +30,12 @@ class Ping
             Webhook::send(
                 'task',
                 [
-                    'data' => [
-                        'command' => $command,
-                        'cron' => $event->expression,
-                        'description' => self::description($command),
-                    ],
+                    'command' => $command,
+                    'cron' => $event->expression,
+                    'description' => self::description($command),
                     'event' => 'before',
                 ]
             );
-
-            return $log;
         };
     }
 
@@ -58,10 +54,8 @@ class Ping
             Webhook::send(
                 'task',
                 [
-                    'data' => [
-                        'command' => $command,
-                        'output' => file_get_contents($event->output),
-                    ],
+                    'command' => $command,
+                    'output' => file_get_contents($event->output),
                     'event' => $event->exitCode === 0 || $event->exitCode === null ? 'success' : 'failure',
                 ]
             );
