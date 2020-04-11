@@ -16,7 +16,7 @@ class Ping
      * @param Schedule $schedule
      * @return Closure
      */
-    public static function before(string $command, Schedule $schedule, &$log): Closure
+    public static function before(string $command, Schedule $schedule, &$log = null): Closure
     {
         return function() use($command, $schedule, &$log) {
             $event = self::event($command, $schedule);
