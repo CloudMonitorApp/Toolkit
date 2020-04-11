@@ -36,7 +36,7 @@ class LogHandler extends AbstractProcessingHandler
 
         $this->error = $record;
         Webhook::send(
-            'error',
+            'issue',
             [
                 'app' => $this->getApp($record['context']['exception']),
                 'incident' => $this->getIncident(),
