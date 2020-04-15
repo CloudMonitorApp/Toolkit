@@ -7,15 +7,8 @@ use Illuminate\Foundation\Testing\WithFaker;
 
 class BackupTest extends TestCase
 {
-    /**
-     * A basic feature test example.
-     *
-     * @return void
-     */
-    public function testExample()
+    public function testCanReachEndpoint()
     {
-        $response = $this->get('/');
 
-        $response->assertStatus(200);
     }
 }

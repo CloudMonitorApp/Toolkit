@@ -2,13 +2,10 @@
 
 namespace EmilMoe\CloudMonitor\Logging;
 
-use App\Log;
-use Monolog\Formatter\FormatterInterface;
-use Exception;
 use Monolog\Logger;
-use Monolog\Handler\AbstractProcessingHandler;
-use Illuminate\Support\Facades\Request;
 use EmilMoe\CloudMonitor\Webhook;
+use Illuminate\Support\Facades\Request;
+use Monolog\Handler\AbstractProcessingHandler;
 
 class LogHandler extends AbstractProcessingHandler
 {
@@ -35,6 +32,7 @@ class LogHandler extends AbstractProcessingHandler
         }
 
         $this->error = $record;
+        
         Webhook::send(
             'issue',
             [

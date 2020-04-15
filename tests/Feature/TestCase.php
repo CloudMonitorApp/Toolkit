@@ -11,6 +11,7 @@ abstract class TestCase extends LaravelTestCase
     public function testHasCredentials()
     {
         $this->assertNotNull(env('CLOUDMONITOR_SECRET', null));
+        $this->assertNotNull(env('CLOUDMONITOR_KEY', null));
     }
 
     /**

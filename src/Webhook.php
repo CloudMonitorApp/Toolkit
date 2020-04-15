@@ -7,6 +7,7 @@ use GuzzleHttp\Client;
 use GuzzleHttp\Psr7\Response;
 use Illuminate\Encryption\Encrypter;
 use GuzzleHttp\Exception\ClientException;
+use GuzzleHttp\Exception\ServerException;
 
 class Webhook
 {
@@ -33,6 +34,10 @@ class Webhook
      */
     public static function send(string $endpoint, array $data): ?Response
     {
+        if (! in_array(env('APP_ENV'), config('cloudmonitor.environments'))) {
+            return null;
+        }
+
         self::$baseUrl = env('CLOUDMONITOR_URL', 'https://api.cloudmonitor.dk/');
 
         if (env('CLOUDMONITOR_KEY', null) === null || env('CLOUDMONITOR_SECRET', null) === null) {
@@ -61,10 +66,8 @@ class Webhook
                     ]
                 ]
             );
-
-            if ($response->hasHeader('x-success')) {
-                print('Job processed with success: '. self::$baseUrl . $endpoint . PHP_EOL);
-            }
+        } catch(ServerException $e) {
+            return $response;
         } catch (ClientException $e) {
             if($e->getResponse()->getStatusCode() === 400) {
                 dd($e->getResponse()->getHeaders()['x-error'][0]);

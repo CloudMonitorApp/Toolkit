@@ -2,10 +2,10 @@
 
 namespace EmilMoe\CloudMonitor\Exceptions;
 
-use App\Exceptions\Handler as ExceptionHandler;
-use Illuminate\Support\Facades\Request;
-use EmilMoe\CloudMonitor\Webhook;
 use Throwable;
+use EmilMoe\CloudMonitor\Webhook;
+use Illuminate\Support\Facades\Request;
+use App\Exceptions\Handler as ExceptionHandler;
 
 class Handler extends ExceptionHandler
 {
@@ -18,6 +18,7 @@ class Handler extends ExceptionHandler
     public function report(Throwable $exception)
     {
         parent::report($exception);
+
         Handler::dispatch($exception);
     }
 
