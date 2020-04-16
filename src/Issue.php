@@ -72,6 +72,7 @@ class Issue
             'os_version'      => php_uname('r'),
             'host_name'       => php_uname('n'),
             'os_architecture' => php_uname('m'),
+            'app_env'         => env('APP_ENV', null),
         ];
     }
 
