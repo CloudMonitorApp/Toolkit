@@ -24,11 +24,11 @@ class Issue
  
         Webhook::send('issue',
             [
-                'app'   => self::issue($exception, $language, $error),
-                'tags'  => self::tags(),
-                'event' => self::event(),
-                'trace' => self::trace($exception),
-                'query' => DB::getQueryLog(),
+                'app'     => self::issue($exception, $language, $error),
+                'tags'    => self::tags(),
+                'event'   => self::event(),
+                'trace'   => self::trace($exception),
+                'queries' => DB::getQueryLog(),
             ]
         );
     }
