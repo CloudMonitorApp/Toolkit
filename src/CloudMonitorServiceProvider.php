@@ -2,6 +2,7 @@
 
 namespace EmilMoe\CloudMonitor;
 
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\ServiceProvider;
 use EmilMoe\CloudMonitor\Exceptions\Handler;
 use Illuminate\Contracts\Debug\ExceptionHandler;
@@ -36,6 +37,8 @@ class CloudMonitorServiceProvider extends ServiceProvider
      */
     public function boot()
     {
+        DB::connection()->enableQueryLog();
+
         $this->publishes([
             __DIR__ .'/config.php' => config_path('cloudmonitor.php'),
         ]);

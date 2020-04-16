@@ -4,6 +4,7 @@ namespace EmilMoe\CloudMonitor;
 
 use Error;
 use Throwable;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Request;
 
 class Issue
@@ -20,13 +21,14 @@ class Issue
         if (self::isIgnored($exception)) {
             return;
         }
-
+ 
         Webhook::send('issue',
             [
                 'app'   => self::issue($exception, $language, $error),
                 'tags'  => self::tags(),
                 'event' => self::event(),
                 'trace' => self::trace($exception),
+                'query' => DB::getQueryLog(),
             ]
         );
     }
