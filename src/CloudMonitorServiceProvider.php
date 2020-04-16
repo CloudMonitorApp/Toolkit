@@ -20,6 +20,8 @@ class CloudMonitorServiceProvider extends ServiceProvider
      */
     public function register()
     {
+        DB::connection()->enableQueryLog();
+        
         $this->app->singleton(
             ExceptionHandler::class,
             Handler::class
@@ -37,8 +39,6 @@ class CloudMonitorServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        DB::connection()->enableQueryLog();
-
         $this->publishes([
             __DIR__ .'/config.php' => config_path('cloudmonitor.php'),
         ]);
