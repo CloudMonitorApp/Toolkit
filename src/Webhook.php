@@ -68,14 +68,8 @@ class Webhook
             );
         } catch(ServerException $e) {
             return $response;
-        } catch (ClientException $e) {
-            if($e->getResponse()->getStatusCode() === 400) {
-                dd($e->getResponse()->getHeaders()['x-error'][0]);
-            }
-
-            dd($e);
         } catch (Exception $e) {
-            dd($e);
+            // Proceed
         }
 
         return $response;
