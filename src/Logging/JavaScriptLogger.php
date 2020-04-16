@@ -2,8 +2,9 @@
 
 namespace EmilMoe\CloudMonitor\Logging;
 
-use Illuminate\Support\Facades\Request;
+use EmilMoe\CloudMonitor\Issue;
 use EmilMoe\CloudMonitor\Webhook;
+use Illuminate\Support\Facades\Request;
 use Illuminate\Http\Request as HttpRequest;
 
 class JavaScriptLogger
@@ -13,6 +14,8 @@ class JavaScriptLogger
      */
     public function write(HttpRequest $request): void
     {
+        //Issue::dispatch(new Exception(), 'javascript');
+
         Webhook::send(
             'error',
             [
