@@ -16,7 +16,7 @@ class Issue
      * @param  string     $language
      * @param  array      $error
      */
-    public static function dispatch(Throwable $exception, string $language, array $error = null): void
+    public static function dispatch(Throwable $exception, string $language, array $error = []): void
     {
         if (self::isIgnored($exception)) {
             return;
