@@ -21,7 +21,7 @@ class Issue
         if (self::isIgnored($exception)) {
             return;
         }
- 
+
         Webhook::send('issue',
             [
                 'app'     => self::issue($exception, $language, $error),
@@ -38,10 +38,10 @@ class Issue
      * 
      * @param  Throwable  $exception
      * @param  string     $language
-     * @param  Error      $error
+     * @param  array      $error
      * @return array
      */
-    public static function issue(Throwable $exception, string $language, Error $error = null): array
+    public static function issue(Throwable $exception, string $language, array $error = []): array
     {
         return [
             'type'     => $language,
