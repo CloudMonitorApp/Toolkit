@@ -23,8 +23,8 @@ class BackupHasFailed extends BackupListener
      * @param  object  $event
      * @return void
      */
-    public function handle($event)
+    public function handle(\Spatie\Backup\Events\BackupHasFailed $event)
     {
-        $this->dispatch('backup', 100, json_encode($event->exception));
+        $this->dispatch('backup', 100, $event->exception->getMessage());
     }
 }

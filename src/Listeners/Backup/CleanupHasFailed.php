@@ -23,8 +23,8 @@ class CleanupHasFailed extends BackupListener
      * @param  object  $event
      * @return void
      */
-    public function handle($event)
+    public function handle(\Spatie\Backup\Events\CleanupHasFailed $event)
     {
-        $this->dispatch('cleanup', 100, json_encode($event->exception));
+        $this->dispatch('cleanup', 100, $event->exception->getMessage());
     }
 }

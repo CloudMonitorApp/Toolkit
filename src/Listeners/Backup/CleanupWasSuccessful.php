@@ -23,7 +23,7 @@ class CleanupWasSuccessful extends BackupListener
      * @param  object  $event
      * @return void
      */
-    public function handle($event)
+    public function handle( \Spatie\Backup\Events\CleanupWasSuccessful $event)
     {
         $this->dispatch('cleanup', 200);
     }

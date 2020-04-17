@@ -23,7 +23,7 @@ class UnhealthyBackupWasFound extends BackupListener
      * @param  object  $event
      * @return void
      */
-    public function handle($event)
+    public function handle(\Spatie\Backup\Events\UnhealthyBackupWasFound $event)
     {
         $this->dispatch('healthy', 100, $event->backupDestinationStatus);
     }

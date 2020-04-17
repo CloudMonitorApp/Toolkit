@@ -12,17 +12,11 @@ use EmilMoe\CloudMonitor\Console\Commands\TestError;
 use EmilMoe\CloudMonitor\Console\Commands\TestBackup;
 use EmilMoe\CloudMonitor\Console\Commands\TestException;
 use EmilMoe\CloudMonitor\Listeners\Backup\BackupHasFailed;
-use EmilMoe\CloudMonitor\Listeners\Backup\BackupWasSuccessful;
 use EmilMoe\CloudMonitor\Listeners\Backup\CleanupHasFailed;
+use EmilMoe\CloudMonitor\Listeners\Backup\BackupWasSuccessful;
 use EmilMoe\CloudMonitor\Listeners\Backup\CleanupWasSuccessful;
 use EmilMoe\CloudMonitor\Listeners\Backup\HealthyBackupWasFound;
-use Spatie\Backup\Events\BackupHasFailed as SpatieBackupHasFailed;
-use Spatie\Backup\Events\CleanupHasFailed as SpatieCleanupHasFailed;
-use Spatie\Backup\Events\BackupWasSuccessful as SpatieBackupWasSuccessful;
-use Spatie\Backup\Events\CleanupWasSuccessful as SpatieCleanupWasSuccessful;
-use Spatie\Backup\Events\HealthyBackupWasFound as SpatieHealthyBackupWasFound;
-use Spatie\Backup\Events\UnhealthyBackupWasFound as SpatieUnhealthyBackupWasFound;
-use Spatie\Backup\Notifications\Notifications\UnhealthyBackupWasFound;
+use EmilMoe\CloudMonitor\Listeners\Backup\UnhealthyBackupWasFound;
 
 class CloudMonitorServiceProvider extends ServiceProvider
 {
@@ -67,28 +61,28 @@ class CloudMonitorServiceProvider extends ServiceProvider
             ]);
 
             if (config('cloudmonitor.backup.listen')) {
-                if (class_exists(SpatieBackupWasSuccessful::class)) {
-                    Event::listen(SpatieBackupWasSuccessful::class, BackupWasSuccessful::class);
+                if (class_exists(\Spatie\Backup\Events\BackupWasSuccessful::class)) {
+                    Event::listen(\Spatie\Backup\Events\BackupWasSuccessful::class, BackupWasSuccessful::class);
                 }
 
-                if (class_exists(SpatieBackupHasFailed::class)) {
-                    Event::listen(SpatieBackupHasFailed::class, BackupHasFailed::class);
+                if (class_exists(\Spatie\Backup\Events\BackupHasFailed::class)) {
+                    Event::listen(\Spatie\Backup\Events\BackupHasFailed::class, BackupHasFailed::class);
                 }
 
-                if (class_exists(SpatieCleanupWasSuccessful::class)) {
-                    Event::listen(SpatieCleanupWasSuccessful::class, CleanupWasSuccessful::class);
+                if (class_exists(\Spatie\Backup\Events\CleanupWasSuccessful::class)) {
+                    Event::listen(\Spatie\Backup\Events\CleanupWasSuccessful::class, CleanupWasSuccessful::class);
                 }
 
-                if (class_exists(SpatieCleanupHasFailed::class)) {
-                    Event::listen(SpatieCleanupHasFailed::class, CleanupHasFailed::class);
+                if (class_exists(\Spatie\Backup\Events\CleanupHasFailed::class)) {
+                    Event::listen(\Spatie\Backup\Events\CleanupHasFailed::class, CleanupHasFailed::class);
                 }
 
-                if (class_exists(SpatieHealthyBackupWasFound::class)) {
-                    Event::listen(SpatieHealthyBackupWasFound::class, HealthyBackupWasFound::class);
+                if (class_exists(\Spatie\Backup\Events\HealthyBackupWasFound::class)) {
+                    Event::listen(\Spatie\Backup\Events\HealthyBackupWasFound::class, HealthyBackupWasFound::class);
                 }
 
-                if (class_exists(SpatieUnhealthyBackupWasFound::class)) {
-                    Event::listen(SpatieUnhealthyBackupWasFound::class, UnhealthyBackupWasFound::class);
+                if (class_exists(\Spatie\Backup\Events\UnhealthyBackupWasFound::class)) {
+                    Event::listen(\Spatie\Backup\Events\UnhealthyBackupWasFound::class, UnhealthyBackupWasFound::class);
                 }
             }
         }

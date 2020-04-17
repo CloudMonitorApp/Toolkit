@@ -17,6 +17,12 @@ abstract class BackupListener
      */
     protected function dispatch(string $event, int $code, string $message = null): void
     {
+        if (session()->has($event . $code)) {
+            return;
+        }
+
+        session()->put($event . $code, true);
+
         Webhook::send(
             'backup',
             [
