@@ -6,7 +6,6 @@ use Exception;
 use GuzzleHttp\Client;
 use GuzzleHttp\Psr7\Response;
 use Illuminate\Encryption\Encrypter;
-use GuzzleHttp\Exception\ClientException;
 use GuzzleHttp\Exception\ServerException;
 
 class Webhook
