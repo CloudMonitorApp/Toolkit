@@ -25,6 +25,6 @@ class UnhealthyBackupWasFound extends BackupListener
      */
     public function handle(\Spatie\Backup\Events\UnhealthyBackupWasFound $event)
     {
-        $this->dispatch('healthy', 100, $event->backupDestinationStatus);
+        $this->dispatch('healthy', 100, $event->backupDestinationStatus->getHealthCheckFailure()->exception()->getMessage());
     }
 }
