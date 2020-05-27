@@ -1,12 +1,13 @@
 {
-    "name": "emilmoe/cloudmonitor",
+    "name": "cloudmonitor/toolkit",
     "description": "Toolkit for integrating a project to CloudMonitor.dk",
     "require": {
-        "laravel/framework": "7.*"
+        "laravel/framework": "7.*",
+        "spatie/laravel-backup": "^6.8"
     },
     "autoload": {
         "psr-4": {
-            "EmilMoe\\CloudMonitor\\": "src"
+            "CloudMonitor\\Toolkit\\": "src"
         }
     },
     "license": "MIT",
@@ -19,7 +20,7 @@
     "extra": {
         "laravel": {
             "providers": [
-                "EmilMoe\\CloudMonitor\\CloudMonitorServiceProvider"
+                "CloudMonitor\\Toolkit\\CloudMonitorServiceProvider"
             ]
         }
     }

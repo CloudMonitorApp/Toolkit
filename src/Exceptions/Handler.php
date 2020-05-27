@@ -1,9 +1,9 @@
 <?php
 
-namespace EmilMoe\CloudMonitor\Exceptions;
+namespace CloudMonitor\Toolkit\Exceptions;
 
 use Throwable;
-use EmilMoe\CloudMonitor\Issue;
+use CloudMonitor\Toolkit\Issue;
 use App\Exceptions\Handler as ExceptionHandler;
 
 class Handler extends ExceptionHandler

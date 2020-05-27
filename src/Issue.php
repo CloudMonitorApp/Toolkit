@@ -1,6 +1,6 @@
 <?php
 
-namespace EmilMoe\CloudMonitor;
+namespace CloudMonitor\Toolkit;
 
 use Error;
 use Throwable;

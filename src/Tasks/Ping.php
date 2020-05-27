@@ -1,9 +1,9 @@
 <?php
 
-namespace EmilMoe\CloudMonitor\Tasks;
+namespace CloudMonitor\Toolkit\Tasks;
 
 use Closure;
-use EmilMoe\CloudMonitor\Webhook;
+use CloudMonitor\Toolkit\Webhook;
 use Illuminate\Console\Scheduling\Event;
 use Illuminate\Console\Scheduling\Schedule;
 

@@ -1,22 +1,22 @@
 <?php
 
-namespace EmilMoe\CloudMonitor;
+namespace CloudMonitor\Toolkit;
 
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\ServiceProvider;
-use EmilMoe\CloudMonitor\Exceptions\Handler;
+use CloudMonitor\Toolkit\Exceptions\Handler;
 use Illuminate\Contracts\Debug\ExceptionHandler;
-use EmilMoe\CloudMonitor\Console\Commands\TestTask;
-use EmilMoe\CloudMonitor\Console\Commands\TestError;
-use EmilMoe\CloudMonitor\Console\Commands\TestBackup;
-use EmilMoe\CloudMonitor\Console\Commands\TestException;
-use EmilMoe\CloudMonitor\Listeners\Backup\BackupHasFailed;
-use EmilMoe\CloudMonitor\Listeners\Backup\CleanupHasFailed;
-use EmilMoe\CloudMonitor\Listeners\Backup\BackupWasSuccessful;
-use EmilMoe\CloudMonitor\Listeners\Backup\CleanupWasSuccessful;
-use EmilMoe\CloudMonitor\Listeners\Backup\HealthyBackupWasFound;
-use EmilMoe\CloudMonitor\Listeners\Backup\UnhealthyBackupWasFound;
+use CloudMonitor\Toolkit\Console\Commands\TestTask;
+use CloudMonitor\Toolkit\Console\Commands\TestError;
+use CloudMonitor\Toolkit\Console\Commands\TestBackup;
+use CloudMonitor\Toolkit\Console\Commands\TestException;
+use CloudMonitor\Toolkit\Listeners\Backup\BackupHasFailed;
+use CloudMonitor\Toolkit\Listeners\Backup\CleanupHasFailed;
+use CloudMonitor\Toolkit\Listeners\Backup\BackupWasSuccessful;
+use CloudMonitor\Toolkit\Listeners\Backup\CleanupWasSuccessful;
+use CloudMonitor\Toolkit\Listeners\Backup\HealthyBackupWasFound;
+use CloudMonitor\Toolkit\Listeners\Backup\UnhealthyBackupWasFound;
 
 class CloudMonitorServiceProvider extends ServiceProvider
 {

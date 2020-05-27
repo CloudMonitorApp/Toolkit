@@ -1,6 +1,6 @@
 <?php
 
-namespace EmilMoe\CloudMonitor\Tests\Feature;
+namespace CloudMonitor\Toolkit\Tests\Feature;
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;

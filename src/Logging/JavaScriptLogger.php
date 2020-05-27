@@ -1,9 +1,9 @@
 <?php
 
-namespace EmilMoe\CloudMonitor\Logging;
+namespace CloudMonitor\Toolkit\Logging;
 
-use EmilMoe\CloudMonitor\Issue;
-use EmilMoe\CloudMonitor\Webhook;
+use CloudMonitor\Toolkit\Issue;
+use CloudMonitor\Toolkit\Webhook;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Http\Request as HttpRequest;
 

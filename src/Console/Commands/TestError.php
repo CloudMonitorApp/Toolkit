@@ -1,8 +1,7 @@
 <?php
 
-namespace EmilMoe\CloudMonitor\Console\Commands;
+namespace CloudMonitor\Toolkit\Console\Commands;
 
-use App\Issue;
 use Illuminate\Console\Command;
 
 class TestError extends Command
@@ -38,7 +37,6 @@ class TestError extends Command
      */
     public function handle()
     {
-        Issue::all();
         trigger_error('Test error: '. md5(time()));
     }
 }

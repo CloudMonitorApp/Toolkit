@@ -4,21 +4,21 @@ namespace CloudMonitor\Toolkit\Console\Commands;
 
 use Illuminate\Console\Command;
 
-class TestBackup extends Command
+class Install extends Command
 {
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $signature = 'cloudmonitor:backup';
+    protected $signature = 'cloudmonitor:install';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Send test error to CloudMonitor';
+    protected $description = 'Install CloudMonitor';
 
     /**
      * Create a new command instance.

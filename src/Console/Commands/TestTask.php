@@ -1,8 +1,8 @@
 <?php
 
-namespace EmilMoe\CloudMonitor\Console\Commands;
+namespace CloudMonitor\Toolkit\Console\Commands;
 
-use EmilMoe\CloudMonitor\Tasks\Ping;
+use CloudMonitor\Toolkit\Tasks\Ping;
 use Illuminate\Console\Command;
 use Illuminate\Console\Scheduling\Schedule;
 

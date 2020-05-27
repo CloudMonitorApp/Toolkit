@@ -1,6 +1,6 @@
 <?php
 
-namespace EmilMoe\CloudMonitor\Console\Commands;
+namespace CloudMonitor\Toolkit\Console\Commands;
 
 use Exception;
 use Illuminate\Console\Command;

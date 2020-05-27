@@ -1,8 +1,8 @@
 <?php
 
-namespace EmilMoe\CloudMonitor\Listeners\Backup;
+namespace CloudMonitor\Toolkit\Listeners\Backup;
 
-use EmilMoe\CloudMonitor\Webhook;
+use CloudMonitor\Toolkit\Webhook;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
 

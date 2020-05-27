@@ -1,6 +1,6 @@
 <?php
 
-namespace EmilMoe\CloudMonitor\Logging;
+namespace CloudMonitor\Toolkit\Logging;
 
 use Monolog\Logger;
 
