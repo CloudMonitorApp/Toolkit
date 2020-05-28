@@ -86,7 +86,7 @@ class Issue
     public static function event(): array
     {
         return [
-            'ip'         => Request::ip(),
+            'ip'         => $_SERVER['REMOTE_ADDR'],
             'user_agent' => Request::header('User-Agent'),
             'user_id'    => auth()->check() ? auth()->id() : null,
             'user'       => auth()->check() ? auth()->user()->toJson() : null,
