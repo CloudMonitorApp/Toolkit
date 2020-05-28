@@ -54,7 +54,7 @@ class JavaScriptLogger
     private function getIncident(HttpRequest $request): array
     {
         return [
-            'ip' => $_SERVER['REMOTE_ADDR'],
+            'ip' => $_SERVER[config('cloudmonitor.ip-source', 'REMOTE_ADDR')],
             'user_agent' => $request->input('user_agent'),
             'user_id' => auth()->check() ? auth()->id() : null,
             'user' => auth()->check() ? auth()->user()->toJson() : null,

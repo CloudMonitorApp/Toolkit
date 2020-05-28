@@ -2,6 +2,7 @@
 
 return [
     'environments' => ['production'],
+    'ip-source' => 'REMOTE_ADDR',
     'backup' => [
         'listen' => true,
     ],
