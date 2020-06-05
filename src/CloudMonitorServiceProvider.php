@@ -2,9 +2,11 @@
 
 namespace CloudMonitor\Toolkit;
 
+use Illuminate\Support\Env;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\ServiceProvider;
+use CloudMonitor\Toolkit\Tasks\Schedule;
 use CloudMonitor\Toolkit\Exceptions\Handler;
 use Illuminate\Contracts\Debug\ExceptionHandler;
 use CloudMonitor\Toolkit\Console\Commands\TestTask;
@@ -33,6 +35,12 @@ class CloudMonitorServiceProvider extends ServiceProvider
             ExceptionHandler::class,
             Handler::class
         );
+
+        $this->app->singleton(Schedule::class, function ($app) {
+            return tap(new Schedule(config('app.schedule_timezone', config('app.timezone'))), function ($schedule) {
+                $schedule->schedule($schedule->useCache(Env::get('SCHEDULE_CACHE_DRIVER')));
+            });
+        });
 
         $this->mergeConfigFrom(
             __DIR__.'/config.php', 'cloudmonitor'
