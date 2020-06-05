@@ -36,11 +36,11 @@ class CloudMonitorServiceProvider extends ServiceProvider
             Handler::class
         );
 
-        $this->app->singleton(Schedule::class, function ($app) {
-            return tap(new Schedule(config('app.schedule_timezone', config('app.timezone'))), function ($schedule) {
-                $schedule->schedule($schedule->useCache(Env::get('SCHEDULE_CACHE_DRIVER')));
-            });
-        });
+        if (app()->runningInConsole) {
+            $this->app->instance(
+                'CloudMonitor\Toolkit\Tasks\Schedule', $schedule = new Schedule
+            );
+        }
 
         $this->mergeConfigFrom(
             __DIR__.'/config.php', 'cloudmonitor'
