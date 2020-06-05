@@ -36,12 +36,6 @@ class CloudMonitorServiceProvider extends ServiceProvider
             Handler::class
         );
 
-        if (app()->runningInConsole) {
-            $this->app->instance(
-                'CloudMonitor\Toolkit\Tasks\Schedule', $schedule = new Schedule
-            );
-        }
-
         $this->mergeConfigFrom(
             __DIR__.'/config.php', 'cloudmonitor'
         );
