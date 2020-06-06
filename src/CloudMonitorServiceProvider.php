@@ -2,11 +2,9 @@
 
 namespace CloudMonitor\Toolkit;
 
-use Illuminate\Support\Env;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\ServiceProvider;
-use CloudMonitor\Toolkit\Tasks\Schedule;
 use CloudMonitor\Toolkit\Exceptions\Handler;
 use Illuminate\Contracts\Debug\ExceptionHandler;
 use CloudMonitor\Toolkit\Console\Commands\TestTask;

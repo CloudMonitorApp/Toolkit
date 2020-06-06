@@ -12,14 +12,13 @@ class Ping
     /**
      * Register when a task is beginning.
      * 
-     * @param  string $command
-     * @param  string $token
-     * @param  Schedule $schedule
+     * @param string $command
+     * @param Schedule $schedule
      * @return Closure
      */
-    public static function before(string $command, string $token, Schedule $schedule, &$log = null): Closure
+    public static function before(string $command, Schedule $schedule, &$log = null): Closure
     {
-        return function() use($command, $token, $schedule, &$log) {
+        return function() use($command, $schedule, &$log) {
             $event = self::event($command, $schedule);
             $log = storage_path('logs/schedule-'.sha1($event->mutexName()).'.log');
 
@@ -31,7 +30,7 @@ class Ping
             Webhook::send(
                 'task',
                 [
-                    'token' => $token,
+                    'command' => $command,
                     'cron' => $event->expression,
                     'description' => self::description($command),
                     'event' => 'before',
