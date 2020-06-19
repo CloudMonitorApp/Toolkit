@@ -3,104 +3,93 @@
 namespace CloudMonitor\Toolkit\Logging;
 
 use CloudMonitor\Toolkit\Issue;
-use CloudMonitor\Toolkit\Webhook;
-use Illuminate\Support\Facades\Request;
+use CloudMonitor\Toolkit\IssueContract;
 use Illuminate\Http\Request as HttpRequest;
 
-class JavaScriptLogger
+class JavaScriptLogger implements IssueContract
 {
+    /**
+     * HTTP Request
+     * 
+     * @var HttpRequest
+     */
+    private $request;
+
     /**
      * 
      */
     public function write(HttpRequest $request): void
     {
-        //Issue::dispatch(new Exception(), 'javascript');
+        $this->request = $request;
+        Issue::dispatch($this, 'javascript');
+    }
 
-        Webhook::send(
-            'error',
-            [
-                'app' => $this->getApp($request),
-                'incident' => $this->getIncident($request),
-                'trace' => $this->getTrace($request),
-            ]
-        );
+    public function getMessage(): string
+    {
+        return $this->request->input('error');
+    }
+
+    public function getLine(): int
+    {
+        return $this->request->input('line');
+    }
+
+    public function getFile(): string
+    {
+        return $this->request->input('file') ?? '';
+    }
+
+    public function getSeverity(): int
+    {
+        return 0;
+    }
+
+    public function getCode(): int
+    {
+        return 0;
+    }
+
+    public function getClass(): string
+    {
+        return $this->request->input('msg');
+    }
+
+    public function getMethod(): string
+    {
+        return '';
+    }
+
+    public function getPrevious(): string
+    {
+        return '';
+    }
+
+    public function getPreview(): array
+    {
+        return [];
+    }
+
+    public function getUrl(): string
+    {
+        return $this->request->input('url');
     }
 
     /**
      * 
      */
-    private function getApp(HttpRequest $request): array
+    public function getTrace(): array
     {
-        return [
-            'type' => 'javascript',
-            'message' => $request->input('error'),
-            'line' => $request->input('line'),
-            'file' => $request->input('file') ?? '',
-            'severity' => '',
-            'level' => '',
-            'code' => '',
-            'class' => $request->input('msg'),
-            'method' => '',
-            'previous' => '',
-            'preview' => '',
-            'url' => $request->input('url'),
-            'stage' => env('APP_ENV', 'unknown APP_ENV'),
-        ];
-    }
-
-    /**
-     * 
-     */
-    private function getIncident(HttpRequest $request): array
-    {
-        return [
-            'ip' => $_SERVER[config('cloudmonitor.ip-source', 'REMOTE_ADDR')] ?? $_SERVER['REMOTE_ADDR'] ?? null,
-            'user_agent' => $request->input('user_agent'),
-            'user_id' => auth()->check() ? auth()->id() : null,
-            'user' => auth()->check() ? auth()->user()->toJson() : null,
-            'session' => Request::hasSession() ? Request::session()->all() : '',
-            'request' => Request::except(['password', 'password_repeat', 'password_again']),
-        ];
-    }
-
-    /**
-     * 
-     */
-    private function getTrace(HttpRequest $request): array
-    {
-        return collect(json_decode($request->input('trace')))->map(function($trace, $index) {
+        return collect(json_decode($this->request->input('trace')))->map(function($trace, $index) {
             return [
                 'stack_key' => $index,
                 'line' => $trace->lineNumber,
                 'preview' => explode(PHP_EOL, $trace->source),
-                'file' => '',
-                'function' => '',
-                'class' => '',
-                'type' => '',
+                'file' => 'file.js',
+                'function' => 'function',
+                'class' => 'class',
+                'type' => 'type',
                 'args' => '',
             ];
         })->toArray();
-    }
-
-    /**
-     * Gather preview of source error.
-     *
-     * @param string $file
-     * @param int $line
-     * @return string
-     */
-    private function getPreview(string $file, int $line): array
-    {
-        $file = explode(PHP_EOL, file_get_contents($file));
-        array_unshift($file, '');
-        unset($file[0]);
-
-        $firstLine = $line - 15;
-
-        if ($line <= 0) {
-            $firstLine = 0;
-        }
-
-        return array_slice($file, $firstLine, 30, true);
     }
 }

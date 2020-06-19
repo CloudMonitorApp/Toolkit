@@ -2,7 +2,6 @@
 
 namespace CloudMonitor\Toolkit;
 
-use Error;
 use Throwable;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Request;
@@ -12,52 +11,86 @@ class Issue
     /**
      * Dispatch issue to CloudMonitor.
      * 
-     * @param  Throwable  $exception
-     * @param  string     $language
-     * @param  array      $error
+     * @param  IssueContract  $issue
+     * @param  string         $language
+     * @param  array          $error
      */
-    public static function dispatch(Throwable $exception, string $language, array $error = []): void
+    public static function dispatch(IssueContract $issue, string $language, array $error = []): void
     {
-        if (self::isIgnored($exception)) {
+        if (self::isIgnored($issue)) {
             return;
         }
 
         Webhook::send('issue',
             [
-                'app'     => self::issue($exception, $language, $error),
+                'app'     => self::issue($issue, $language, $error),
                 'tags'    => self::tags(),
                 'event'   => self::event(),
-                'trace'   => self::trace($exception),
+                'trace'   => $issue->getTrace(),
                 'queries' => DB::getQueryLog(),
             ]
         );
     }
 
     /**
-     * Details about issue and the application.
-     * 
-     * @param  Throwable  $exception
-     * @param  string     $language
-     * @param  array      $error
+     * Gather preview of source error.
+     *
+     * @param  string  $file
+     * @param  int     $line
      * @return array
      */
-    public static function issue(Throwable $exception, string $language, array $error = []): array
+    public static function makePreview(string $file, int $line): array
+    {
+        $file = explode(PHP_EOL, file_get_contents($file));
+        array_unshift($file, '');
+        unset($file[0]);
+
+        $firstLine = $line - 15;
+
+        if ($line <= 0) {
+            $firstLine = 0;
+        }
+
+        return array_slice($file, $firstLine, 30, true);
+    }
+
+    /**
+     * Is the issue set to be ignored.
+     * 
+     * @param  IssueContract  $issue
+     * @return bool
+     */
+    private static function isIgnored(IssueContract $issue): bool
+    {
+        return collect(config('cloudmonitor.exceptions.ignore'))->contains(function(string $class) use($issue) {
+            return $issue instanceof $class;
+        });
+    }
+
+    /**
+     * Details about issue and the application.
+     * 
+     * @param  IssueContract  $exception
+     * @param  string         $language
+     * @param  array          $error
+     * @return array
+     */
+    public static function issue(IssueContract $issue, string $language, array $error = []): array
     {
         return [
-            'type'     => $language,
-            'message'  => method_exists($exception, 'getMessage') ? $exception->getMessage() ?? '' : '',
-            'line'     => method_exists($exception, 'getLine') ? $exception->getLine() ?? '' : '',
-            'file'     => method_exists($exception, 'getFile') ? str_ireplace(base_path(), '', $exception->getFile()) ?? '' : '',
-            'severity' => method_exists($exception, 'getSeverity') ? $exception->getSeverity() : '',
-            'level'    => isset($error['level_name']) ? $error['level_name'] : '',
-            'code'     => method_exists($exception, 'getCode') ? $exception->getCode() ?? '' : '',
-            'class'    => get_class($exception) ?? '',
-            'method'   => method_exists('Request', 'method') ? Request::method() ?? '' : '',
-            'previous' => $exception->getPrevious() ?? '',
-            'preview'  => method_exists($exception, 'getFile') && method_exists($exception, 'getLine')
-                            ? self::makePreview($exception->getFile(), $exception->getLine()) : '',
-            'url'      => app()->runningInConsole() ? 'Console' : url()->full(),
-            'stage'    => env('APP_ENV', 'unknown stage'),
+            'type' => $language,
+            'message' => $issue->getMessage(),
+            'line' => $issue->getLine(),
+            'file' => $issue->getFile(),
+            'severity' => $issue->getSeverity(),
+            'level' => 0,
+            'code' => $issue->getCode(),
+            'class' => $issue->getClass(),
+            'method' => $issue->getMethod(),
+            'previous' => $issue->getPrevious(),
+            'preview' => $issue->getPreview(),
+            'url' => app()->runningInConsole() ? 'Console' : $issue->getUrl(),
+            'stage' => env('APP_ENV', 'unknown stage'),
         ];
     }
 
@@ -93,62 +126,5 @@ class Issue
             'session'    => $_SESSION ?? null,
             'request'    => json_encode(Request::except(['password', 'password_repeat', 'password_again'])),
         ];
-    }
-
-    /**
-     * Stack trace.
-     * 
-     * @param  Throwable  $exception
-     * @return array
-     */
-    public static function trace(Throwable $exception): array
-    {
-        return collect($exception->getTrace())->map(function ($trace, $index) {
-            return [
-                'stack_key' => $index,
-                'file'      => str_ireplace(base_path(), '', $trace['file'] ?? null) ?? null,
-                'line'      => $trace['line'] ?? null,
-                'function'  => $trace['function'] ?? null,
-                'class'     => $trace['class'] ?? null,
-                'type'      => $trace['type'] ?? null,
-                'args'      => $trace['args'] ?? null,
-                'preview'   => isset($trace['file'], $trace['line']) ? self::makePreview($trace['file'], $trace['line']) : null,
-            ];
-        })->toArray();
-    }
-
-    /**
-     * Gather preview of source error.
-     *
-     * @param  string  $file
-     * @param  int     $line
-     * @return array
-     */
-    private static function makePreview(string $file, int $line): array
-    {
-        $file = explode(PHP_EOL, file_get_contents($file));
-        array_unshift($file, '');
-        unset($file[0]);
-
-        $firstLine = $line - 15;
-
-        if ($line <= 0) {
-            $firstLine = 0;
-        }
-
-        return array_slice($file, $firstLine, 30, true);
-    }
-
-    /**
-     * Is the exception set to be ignored.
-     * 
-     * @param  Throwable  $exception
-     * @return bool
-     */
-    private static function isIgnored(Throwable $exception): bool
-    {
-        return collect(config('cloudmonitor.exceptions.ignore'))->contains(function(string $class) use($exception) {
-            return $exception instanceof $class;
-        });
     }
 }
