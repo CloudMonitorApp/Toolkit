@@ -58,7 +58,7 @@ class LogHandler extends AbstractProcessingHandler implements IssueContract
 
     public function getCode(): int
     {
-        return $this->exception->getCode();
+        return (int) $this->exception->getCode();
     }
 
     public function getClass(): string
