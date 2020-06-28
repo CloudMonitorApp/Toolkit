@@ -44,9 +44,9 @@ class JavaScriptLogger implements IssueContract
         return 0;
     }
 
-    public function getCode(): int
+    public function getCode(): string
     {
-        return 0;
+        return '';
     }
 
     public function getClass(): string

@@ -8,7 +8,7 @@ interface IssueContract
     public function getLine(): int;
     public function getFile(): string;
     public function getSeverity(): int;
-    public function getCode(): int;
+    public function getCode(): string;
     public function getClass(): string;
     public function getMethod(): string;
     public function getPrevious(): string;

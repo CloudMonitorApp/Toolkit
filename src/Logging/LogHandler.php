@@ -56,9 +56,9 @@ class LogHandler extends AbstractProcessingHandler implements IssueContract
         return method_exists($this->exception, 'getSeverity') ? $this->exception->getSeverity() : 0;
     }
 
-    public function getCode(): int
+    public function getCode(): string
     {
-        return (int) $this->exception->getCode();
+        return $this->exception->getCode();
     }
 
     public function getClass(): string
