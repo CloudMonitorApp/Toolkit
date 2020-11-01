@@ -48,6 +48,6 @@ class Install extends Command
 
         Artisan::call('cloudmonitor:verify');
 
-        $this->line("Installed!\n");
+        $this->line('Installed!');
     }
 }
