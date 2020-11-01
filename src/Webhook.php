@@ -15,7 +15,7 @@ class Webhook
      * 
      * @var string
      */
-    const VERSION = '1.0.5';
+    const VERSION = '1.0.7';
 
     /**
      * Base URL without event relatede endpoint.

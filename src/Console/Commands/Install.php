@@ -39,11 +39,11 @@ class Install extends Command
     public function handle()
     {
         if(strpos(file_get_contents(base_path('.env')), 'CLOUDMONITOR_KEY') !== true) {
-            file_put_contents(base_path('.env'), 'CLOUDMONITOR_KEY='. $this->argument('key'), FILE_APPEND);
+            file_put_contents(base_path('.env'), PHP_EOL .'CLOUDMONITOR_KEY='. $this->argument('key'), FILE_APPEND);
         }
     
         if(strpos(file_get_contents(base_path('.env')), 'CLOUDMONITOR_SECRET') !== true) {
-            file_put_contents(base_path('.env'), 'CLOUDMONITOR_SECRET='. $this->argument('secret'), FILE_APPEND);
+            file_put_contents(base_path('.env'), PHP_EOL .'CLOUDMONITOR_SECRET='. $this->argument('secret'), FILE_APPEND);
         }
 
         Artisan::call('cloudmonitor:verify');
