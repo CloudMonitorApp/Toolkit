@@ -82,7 +82,7 @@ class JavaScriptLogger implements IssueContract
         return collect(json_decode($this->request->input('trace')))->map(function($trace, $index) {
             return [
                 'stack_key' => $index,
-                'line' => $trace->lineNumber,
+                'line' => $trace->lineNumber ?? null,
                 'preview' => explode(PHP_EOL, $trace->source),
                 'file' => 'file.js',
                 'function' => 'function',

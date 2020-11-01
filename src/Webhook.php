@@ -15,7 +15,7 @@ class Webhook
      * 
      * @var string
      */
-    const VERSION = '1.0.4';
+    const VERSION = '1.0.5';
 
     /**
      * Base URL without event relatede endpoint.
@@ -31,7 +31,7 @@ class Webhook
      * @param array $data
      * @throws Exception
      */
-    public static function send(string $endpoint, array $data): ?Response
+    public static function send(string $endpoint, array $data = []): ?Response
     {
         if (! in_array(env('APP_ENV'), config('cloudmonitor.environments'))) {
             return null;
