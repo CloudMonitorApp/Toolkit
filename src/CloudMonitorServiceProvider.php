@@ -2,6 +2,7 @@
 
 namespace CloudMonitor\Toolkit;
 
+use CloudMonitor\Toolkit\Console\Commands\Install;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\ServiceProvider;
@@ -11,6 +12,7 @@ use CloudMonitor\Toolkit\Console\Commands\TestTask;
 use CloudMonitor\Toolkit\Console\Commands\TestError;
 use CloudMonitor\Toolkit\Console\Commands\TestBackup;
 use CloudMonitor\Toolkit\Console\Commands\TestException;
+use CloudMonitor\Toolkit\Console\Commands\Verify;
 use CloudMonitor\Toolkit\Listeners\Backup\BackupHasFailed;
 use CloudMonitor\Toolkit\Listeners\Backup\CleanupHasFailed;
 use CloudMonitor\Toolkit\Listeners\Backup\BackupWasSuccessful;
@@ -58,6 +60,8 @@ class CloudMonitorServiceProvider extends ServiceProvider
                 TestError::class,
                 TestTask::class,
                 TestBackup::class,
+                Install::class,
+                Verify::class,
             ]);
 
             if (config('cloudmonitor.backup.listen')) {
