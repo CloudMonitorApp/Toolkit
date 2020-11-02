@@ -15,7 +15,7 @@ class Webhook
      * 
      * @var string
      */
-    const VERSION = '1.0.8';
+    const VERSION = '1.0.9';
 
     /**
      * Base URL without event relatede endpoint.
@@ -31,19 +31,15 @@ class Webhook
      * @param array $data
      * @throws Exception
      */
-    public static function send(string $endpoint, array $data = []): ?Response
+    public static function send(string $endpoint, array $data = null): ?Response
     {
-        if (! in_array(env('APP_ENV', 'production'), config('cloudmonitor.environments'))) {
-            return null;
-        }
-
         self::$baseUrl = env('CLOUDMONITOR_URL', 'https://api.cloudmonitor.dk/');
 
         if (env('CLOUDMONITOR_KEY', null) === null || env('CLOUDMONITOR_SECRET', null) === null) {
             return null;
         }
 
-        $client = new Client();
+        $client = new Client(['verify' => env('CLOUDMONITOR_SSL_VERIFY', true)]);
         $response = null;
 
         $timestamp = time();
