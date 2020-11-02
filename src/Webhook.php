@@ -15,7 +15,7 @@ class Webhook
      * 
      * @var string
      */
-    const VERSION = '1.0.7';
+    const VERSION = '1.0.8';
 
     /**
      * Base URL without event relatede endpoint.
@@ -33,7 +33,7 @@ class Webhook
      */
     public static function send(string $endpoint, array $data = []): ?Response
     {
-        if (! in_array(env('APP_ENV'), config('cloudmonitor.environments'))) {
+        if (! in_array(env('APP_ENV', 'production'), config('cloudmonitor.environments'))) {
             return null;
         }
 
