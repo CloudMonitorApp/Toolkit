@@ -18,7 +18,7 @@ class Host
     {
         try {
             return function_exists('shell_exec') && is_readable('/proc/stat')
-                ? shell_exec("grep 'cpu ' /proc/stat | awk '{usage=($2+$4)*100/($2+$4+$5)} END {print usage}'")
+                ? (float) shell_exec("grep 'cpu ' /proc/stat | awk '{usage=($2+$4)*100/($2+$4+$5)} END {print usage}'")
                 : null;
         }
         catch (Exception $e) {
@@ -30,7 +30,7 @@ class Host
     {
         try {
             return @is_readable('/')
-                ? round(100 - ((disk_free_space('/') / disk_total_space('/')) * 100), 2)
+                ? (float) round(100 - ((disk_free_space('/') / disk_total_space('/')) * 100), 2)
                 : null;
         }
         catch (Exception $e) {
@@ -42,7 +42,7 @@ class Host
     {
         try {
             return function_exists('shell_exec') && $this->hasCommand('free')
-                ? shell_exec("free | grep Mem | awk '{print $3/$2 * 100.0}'")
+                ? (float) shell_exec("free | grep Mem | awk '{print $3/$2 * 100.0}'")
                 : null;
         }
         catch (Exception $e) {
