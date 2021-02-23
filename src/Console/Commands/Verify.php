@@ -2,8 +2,9 @@
 
 namespace CloudMonitor\Toolkit\Console\Commands;
 
-use CloudMonitor\Toolkit\Ping;
+use App\User;
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\DB;
 
 class Verify extends Command
 {
@@ -38,6 +39,11 @@ class Verify extends Command
      */
     public function handle()
     {
-        Ping::send();
+        User::all();
+        DB::statement('select * from applications');
+        
+        $this->line('Verifiying installation');
+
+        //Ping::send();
     }
 }

@@ -5,22 +5,32 @@ return [
     'backup' => [
         'listen' => true,
     ],
-    'exceptions' => [
-        'ignore' => [
-            Illuminate\Foundation\Http\Exceptions\MaintenanceModeException::class,
-            Symfony\Component\HttpKernel\Exception\NotFoundHttpException::class,
-        ]
-    ],
-    'suspicious' => [
-        'operations' => [
-            Symfony\Component\HttpFoundation\Exception\SuspiciousOperationException::class,
-            Symfony\Component\HttpKernel\Exception\NotFoundHttpException::class,
-        ],
-    ],
-    'system' => [
-        'monitor' => [
-            'cpu',
-            'ram',
-        ],
-    ],
+    'ignored_commands' => [
+        'schedule:run',
+        'schedule:finish',
+        'package:discover',
+        'vendor:publish',
+        'package:discover',
+        'migrate:rollback',
+        'migrate:refresh',
+        'migrate:fresh',
+        'migrate:reset',
+        'migrate:install',
+        'config:cache',
+        'config:clear',
+        'route:cache',
+        'list',
+        'route:clear',
+        'view:cache',
+        'view:clear',
+        'queue:listen',
+        'queue:work',
+        'queue:restart',
+        'horizon',
+        'horizon:work',
+        'horizon:supervisor',
+        'horizon:terminate',
+        'horizon:snapshot',
+        'nova:publish',
+    ]
 ];

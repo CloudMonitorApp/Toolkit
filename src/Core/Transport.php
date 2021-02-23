@@ -1,39 +1,55 @@
 <?php
 
-namespace CloudMonitor\Toolkit;
+namespace CloudMonitor\Toolkit\Core;
 
 use Exception;
 use GuzzleHttp\Client;
-use GuzzleHttp\Psr7\Response;
-use Illuminate\Encryption\Encrypter;
 use GuzzleHttp\Exception\ServerException;
+use Illuminate\Encryption\Encrypter;
 
-class Webhook
+class Transport
 {
     /**
-     * Version string.
+     * Queue.
      * 
-     * @var string
+     * @var array
      */
-    const VERSION = '1.0.9';
+    private $queue = [];
 
     /**
-     * Base URL without event relatede endpoint.
+     * Add entry to queue.
      * 
-     * @var string
+     * @param $item
+     * @return Transport
      */
-    private static $baseUrl;
-
-    /**
-     * Send event to CloudMonitor.
-     * 
-     * @param string $endpoint
-     * @param array $data
-     * @throws Exception
-     */
-    public static function send(string $endpoint, array $data = null): ?Response
+    public function addEntry($item): Transport
     {
-        self::$baseUrl = env('CLOUDMONITOR_URL', 'https://api.cloudmonitor.dk/');
+        $this->queue[] = $item;
+        
+        return $this;
+    }
+
+    /**
+     * Flush queue.
+     * 
+     * @return void
+     */
+    public function flush(): void
+    {
+        if (empty($this->queue)) {
+            return;
+        }
+
+        /*if (! in_array($this->queue[0]->name, CloudMonitor::FILTERED)) {
+            file_put_contents(dirname(__DIR__, 1) .'/debug/final-'. time() .'.json', json_encode($this->queue, JSON_PRETTY_PRINT));
+        }*/
+
+        $this->queue = [];
+    }
+
+    public static function send($item)
+    {
+        // file_put_contents(dirname(__DIR__, 1) .'/debug/queue.json', json_encode($item, JSON_PRETTY_PRINT), FILE_APPEND);
 
         if (env('CLOUDMONITOR_KEY', null) === null || env('CLOUDMONITOR_SECRET', null) === null) {
             return null;
@@ -47,17 +63,16 @@ class Webhook
         try {
             $response = $client->request(
                 'POST',
-                self::$baseUrl . $endpoint,
+                env('CLOUDMONITOR_URL', 'https://api.cloudmonitor.dk/'),
                 [
                     'headers' => [
-                        'timestamp' => $timestamp,
-                        'version' => self::VERSION,
-                        'token' => env('CLOUDMONITOR_KEY'),
-                        'signature' => self::makeSignature($timestamp),
-                        'installation' => env('CLOUDMONITOR_INSTALLATION', null),
+                        'X-CloudMonitor-Timestamp' => $timestamp,
+                        'X-CloudMonitor-Version' => CloudMonitor::VERSION,
+                        'X-CloudMonitor-Token' => env('CLOUDMONITOR_KEY'),
+                        'X-CloudMonitor-Signature' => self::makeSignature($timestamp),
                     ],
                     'form_params' => [
-                        'data' => self::encrypt(json_encode($data))
+                        'data' => self::encrypt(json_encode($item))
                     ]
                 ]
             );
@@ -66,8 +81,6 @@ class Webhook
         } catch (Exception $e) {
             // Proceed
         }
-
-        return $response;
     }
 
     /**

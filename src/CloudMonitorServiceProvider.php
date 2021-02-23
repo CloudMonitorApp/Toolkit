@@ -2,45 +2,33 @@
 
 namespace CloudMonitor\Toolkit;
 
-use CloudMonitor\Toolkit\Console\Commands\Install;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\ServiceProvider;
-use CloudMonitor\Toolkit\Exceptions\Handler;
-use Illuminate\Contracts\Debug\ExceptionHandler;
+use CloudMonitor\Toolkit\Core\CloudMonitor;
+use Symfony\Component\Console\Input\ArgvInput;
+use CloudMonitor\Toolkit\Console\Commands\Verify;
+use CloudMonitor\Toolkit\Console\Commands\Install;
 use CloudMonitor\Toolkit\Console\Commands\TestTask;
 use CloudMonitor\Toolkit\Console\Commands\TestError;
 use CloudMonitor\Toolkit\Console\Commands\TestBackup;
 use CloudMonitor\Toolkit\Console\Commands\TestException;
-use CloudMonitor\Toolkit\Console\Commands\Verify;
 use CloudMonitor\Toolkit\Listeners\Backup\BackupHasFailed;
 use CloudMonitor\Toolkit\Listeners\Backup\CleanupHasFailed;
+use CloudMonitor\Toolkit\Auth\Providers\AuthServiceProvider;
+use CloudMonitor\Toolkit\Email\Providers\EmailServiceProvider;
 use CloudMonitor\Toolkit\Listeners\Backup\BackupWasSuccessful;
+use CloudMonitor\Toolkit\Redis\Providers\RedisServiceProvider;
 use CloudMonitor\Toolkit\Listeners\Backup\CleanupWasSuccessful;
 use CloudMonitor\Toolkit\Listeners\Backup\HealthyBackupWasFound;
+use CloudMonitor\Toolkit\Database\Providers\QueryServiceProvider;
+use CloudMonitor\Toolkit\Command\Providers\CommandServiceProvider;
 use CloudMonitor\Toolkit\Listeners\Backup\UnhealthyBackupWasFound;
+use CloudMonitor\Toolkit\Error\Providers\ExceptionsServiceProvider;
+use CloudMonitor\Toolkit\Notification\Providers\NotificationServiceProvider;
+use CloudMonitor\Toolkit\ScheduledTask\Providers\ScheduledTaskServiceProvider;
 
 class CloudMonitorServiceProvider extends ServiceProvider
 {
-    /**
-     * Register any application services.
-     *
-     * @return void
-     */
-    public function register()
-    {
-        DB::connection()->enableQueryLog();
-        
-        $this->app->singleton(
-            ExceptionHandler::class,
-            Handler::class
-        );
-
-        $this->mergeConfigFrom(
-            __DIR__.'/config.php', 'cloudmonitor'
-        );
-    }
-
     /**
      * Bootstrap any application services.
      *
@@ -90,5 +78,41 @@ class CloudMonitorServiceProvider extends ServiceProvider
                 }
             }
         }
+    }
+
+    /**
+     * Register any application services.
+     *
+     * @return void
+     */
+    public function register()
+    {
+        $this->mergeConfigFrom(
+            __DIR__.'/config.php', 'cloudmonitor'
+        );
+
+        $this->app->singleton('cloudmonitor', function () {
+            return new CloudMonitor();
+        });
+
+        $this->registerServiceProviders();
+    }
+
+    private function registerServiceProviders(): void
+    {
+        if ($this->app->runningInConsole() && ! in_array((new ArgvInput())->getFirstArgument(), config('cloudmonitor.ignored_commands'))) {
+            $this->app->register(CommandServiceProvider::class);
+        }
+
+        if ($this->app->runningInConsole()) {
+            $this->app->register(ScheduledTaskServiceProvider::class);
+        }
+        
+        $this->app->register(AuthServiceProvider::class);
+        $this->app->register(ExceptionsServiceProvider::class);
+        $this->app->register(QueryServiceProvider::class);
+        $this->app->register(NotificationServiceProvider::class);
+        $this->app->register(EmailServiceProvider::class);
+        $this->app->register(RedisServiceProvider::class);
     }
 }

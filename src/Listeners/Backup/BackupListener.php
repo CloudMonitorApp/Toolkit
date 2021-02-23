@@ -2,6 +2,8 @@
 
 namespace CloudMonitor\Toolkit\Listeners\Backup;
 
+use CloudMonitor\Toolkit\Core\Facades\CloudMonitor;
+use CloudMonitor\Toolkit\Core\Transaction;
 use CloudMonitor\Toolkit\Webhook;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
@@ -23,13 +25,13 @@ abstract class BackupListener
 
         session()->put($event . $code, true);
 
-        Webhook::send(
-            'backup',
+        CloudMonitor::startTransaction('backup', Transaction::TRANSACTION_BACKUP)
+            ->addContext('backup',
             [
                 'event'   => $event,
                 'code'    => $code,
                 'message' => $message,
-            ]
-        );
+            ])
+            ->end();
     }
 }
