@@ -10,7 +10,7 @@ class Request
             return;
         }
 
-        $this->method = request()->getMethod();
+        $this->method = request()->getMethod() ?? null;
         $this->url = request()->getUri();
         $this->version = substr($_SERVER['SERVER_PROTOCOL'], strpos($_SERVER['SERVER_PROTOCOL'], '/'));
         $this->remote_address = $_SERVER['REMOTE_ADDR'] ?? '';
