@@ -8,7 +8,6 @@ use CloudMonitor\Toolkit\Core\CloudMonitor;
 use Symfony\Component\Console\Input\ArgvInput;
 use CloudMonitor\Toolkit\Console\Commands\Verify;
 use CloudMonitor\Toolkit\Console\Commands\Install;
-use CloudMonitor\Toolkit\Console\Commands\TestTask;
 use CloudMonitor\Toolkit\Console\Commands\TestError;
 use CloudMonitor\Toolkit\Console\Commands\TestBackup;
 use CloudMonitor\Toolkit\Console\Commands\TestException;
@@ -46,7 +45,6 @@ class CloudMonitorServiceProvider extends ServiceProvider
             $this->commands([
                 TestException::class,
                 TestError::class,
-                TestTask::class,
                 TestBackup::class,
                 Install::class,
                 Verify::class,
