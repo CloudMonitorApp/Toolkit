@@ -15,6 +15,10 @@ class Request
 
     private function method(): ?string
     {
+        if (! isset($_SERVER['REQUEST_METHOD'])) {
+            return null;
+        }
+        
         return $_SERVER['REQUEST_METHOD'] ?? null;
     }
 
@@ -25,11 +29,19 @@ class Request
 
     private function protocol(): ?string
     {
-        return substr($_SERVER['SERVER_PROTOCOL'], strpos($_SERVER['SERVER_PROTOCOL'], '/')) ?? null;
+        if (! isset($_SERVER['SERVER_PROTOCOL'], $_SERVER['SERVER_PROTOCOL'])) {
+            return null;
+        }
+
+        return substr($_SERVER['SERVER_PROTOCOL'], strpos($_SERVER['SERVER_PROTOCOL'], '/'));
     }
     
     private function address(): ?string
     {
+        if (! isset($_SERVER['REMOTE_ADDR'])) {
+            return null;
+        }
+
         $address = $_SERVER['REMOTE_ADDR'];
 
         if (array_key_exists('HTTP_X_FORWARDED_FOR', $_SERVER) === true) {
