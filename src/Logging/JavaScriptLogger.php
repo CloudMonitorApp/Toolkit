@@ -3,10 +3,9 @@
 namespace CloudMonitor\Toolkit\Logging;
 
 use CloudMonitor\Toolkit\Issue;
-use CloudMonitor\Toolkit\IssueContract;
 use Illuminate\Http\Request as HttpRequest;
 
-class JavaScriptLogger implements IssueContract
+class JavaScriptLogger
 {
     /**
      * HTTP Request

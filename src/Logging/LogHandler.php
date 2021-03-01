@@ -4,10 +4,9 @@ namespace CloudMonitor\Toolkit\Logging;
 
 use Monolog\Logger;
 use CloudMonitor\Toolkit\Issue;
-use CloudMonitor\Toolkit\IssueContract;
 use Monolog\Handler\AbstractProcessingHandler;
 
-class LogHandler extends AbstractProcessingHandler implements IssueContract
+class LogHandler extends AbstractProcessingHandler
 {
     /**
      * @var Exception
