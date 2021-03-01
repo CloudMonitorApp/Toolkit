@@ -6,8 +6,8 @@ use Exception;
 use Throwable;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Log\Events\MessageLogged;
-use CloudMonitor\Toolkit\Core\Facades\CloudMonitor;
 use CloudMonitor\Toolkit\Core\Transaction;
+use CloudMonitor\Toolkit\Core\Facades\CloudMonitor;
 
 class ExceptionsServiceProvider extends ServiceProvider
 {

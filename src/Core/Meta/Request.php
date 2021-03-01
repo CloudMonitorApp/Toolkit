@@ -6,14 +6,31 @@ class Request
 {
     public function __construct()
     {
-        if (! isset($_SERVER['REQUEST_METHOD'])) {
-            return;
-        }
+        $this->method = $this->method();
+        $this->url = $this->url();
+        $this->version = $this->protocol();
+        $this->remote_address = $this->address();
+        $this->encrypted = $this->encrypted();
+    }
 
-        $this->method = request()->getMethod() ?? null;
-        $this->url = request()->getUri();
-        $this->version = substr($_SERVER['SERVER_PROTOCOL'], strpos($_SERVER['SERVER_PROTOCOL'], '/'));
-        $this->remote_address = $_SERVER['REMOTE_ADDR'] ?? '';
+    private function method(): ?string
+    {
+        return $_SERVER['REQUEST_METHOD'] ?? null;
+    }
+
+    private function url(): ?string
+    {
+        return request()->getUri() ?? null;
+    }
+
+    private function protocol(): ?string
+    {
+        return substr($_SERVER['SERVER_PROTOCOL'], strpos($_SERVER['SERVER_PROTOCOL'], '/')) ?? null;
+    }
+    
+    private function address(): ?string
+    {
+        $address = $_SERVER['REMOTE_ADDR'];
 
         if (array_key_exists('HTTP_X_FORWARDED_FOR', $_SERVER) === true) {
             $this->remote_address = $_SERVER['HTTP_X_FORWARDED_FOR'];
@@ -23,6 +40,11 @@ class Request
             $this->remote_address = $_SERVER['HTTP_X_REAL_IP'];
         }
 
-        $this->encrypted = isset($_SERVER['HTTPS']);
+        return $address ?? null;
+    }
+
+    private function encrypted(): bool
+    {
+        return isset($_SERVER['HTTPS']);
     }
 }

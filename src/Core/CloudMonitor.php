@@ -129,33 +129,6 @@ class CloudMonitor
     }
 
     /**
-     * Add segment.
-     * 
-     * @param $callback
-     * @param type
-     * @param label
-     * @param throw
-     * @throws Throwable
-     * @return Closure
-     */
-    /*public function addSegment(Closure $callback, $type, $label = null, $throw = false): Closure
-    {
-        $segment = $this->startSegment($type, $label);
-
-        try {
-            return $callback($segment);
-        } catch (Throwable $exception) {
-            if ($throw === true) {
-                throw $exception;
-            }
-
-            $this->reportException($exception);
-        } finally {
-            $segment->end();
-        }
-    }*/
-
-    /**
      * Exception reporter.
      * 
      * @param Throwable $exception

@@ -6,11 +6,17 @@ class User
 {
     public function __construct()
     {
-        if (! auth()->check()) {
-            return;
-        }
+        $this->id = $this->id();
+        $this->name = $this->name();
+    }
 
-        $this->id = auth()->id();
-        $this->name = auth()->user()->{config('cloudmonitor.user_name_field')};
+    private function id(): ?int
+    {
+        return auth()->id() ?? null;
+    }
+
+    private function name(): ?string
+    {
+        return auth()->user()->{config('cloudmonitor.user_name_field')} ?? null;
     }
 }
