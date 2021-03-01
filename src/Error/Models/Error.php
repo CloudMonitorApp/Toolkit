@@ -78,7 +78,7 @@ class Error
                 'function' => isset($trace['function']) ? $trace['function'] : null,
                 'args' => $this->stackTraceArgsToArray($trace),
                 'type' => $trace['type'] ?? 'function',
-                'file' => $trace['file'] ?? '[internal]',
+                'file' => str_ireplace(base_path(), '', $trace['file'] ?? '[internal]'),
                 'line' => $trace['line'] ?? '0',
                 'preview' => isset($trace['file']) ? $this->getCode($trace['file'], $trace['line'] ?? '0') : [],
             ];
@@ -138,9 +138,25 @@ class Error
      * @param int $linesAround
      * @return mixed
      */
-    public function getCode($filePath, $line, $linesAround = 10)
+    public function getCode($filePath, $line = 0, $linesAround = 10)
     {
-        if (!$filePath || !$line) {
+        $file = explode(PHP_EOL, file_get_contents($filePath));
+        array_unshift($file, '');
+        unset($file[0]);
+
+        $firstLine = $line - $linesAround;
+
+        if ($firstLine < 0) {
+            $firstLine = 0;
+        }
+
+        if ($line <= 0) {
+            $firstLine = 0;
+        }
+
+        return array_slice($file, $firstLine, $linesAround + $firstLine, true);
+
+        /*if (!$filePath || !$line) {
             return null;
         }
 
@@ -164,6 +180,6 @@ class Error
             return $codeLines;
         } catch (\Exception $e) {
             return null;
-        }
+        }*/
     }
 }
