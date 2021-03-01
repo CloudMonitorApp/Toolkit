@@ -6,10 +6,10 @@ class Session
 {
     public function __construct()
     {
-        if (! method_exists(request(), 'session')) {
+        if (! method_exists(request(), 'session') || ! request()->hasSession()) {
             return;
         }
-        
+
         foreach(request()->session()->all() as $key => $value) {
             $this->{$key} = $value;
         }

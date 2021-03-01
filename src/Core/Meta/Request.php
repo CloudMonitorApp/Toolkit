@@ -18,13 +18,17 @@ class Request
         if (! isset($_SERVER['REQUEST_METHOD'])) {
             return null;
         }
-        
-        return $_SERVER['REQUEST_METHOD'] ?? null;
+
+        return $_SERVER['REQUEST_METHOD'];
     }
 
     private function url(): ?string
     {
-        return request()->getUri() ?? null;
+        if (! method_exists(request(), 'getUri')) {
+            return null;
+        }
+
+        return request()->getUri();
     }
 
     private function protocol(): ?string
@@ -52,7 +56,7 @@ class Request
             $this->remote_address = $_SERVER['HTTP_X_REAL_IP'];
         }
 
-        return $address ?? null;
+        return $address;
     }
 
     private function encrypted(): bool
