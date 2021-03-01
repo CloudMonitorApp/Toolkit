@@ -32,5 +32,6 @@ return [
         'horizon:terminate',
         'horizon:snapshot',
         'nova:publish',
+        'key:generate',
     ]
 ];

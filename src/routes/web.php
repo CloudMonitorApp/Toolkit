@@ -1,7 +1,6 @@
 <?php
 
 use Illuminate\Http\Request;
-use CloudMonitor\Toolkit\Ping;
 use Illuminate\Support\Facades\Route;
 use CloudMonitor\Toolkit\Logging\JavaScriptLogger;
 
@@ -12,10 +11,6 @@ Route::post('cloudmonitor', function(Request $request) {
 Route::post('/cloudmonitor/callback', function(Request $request) {
     if ($request->header('x-key') !== md5(env('CLOUDMONITOR_KEY'))) {
         return;
-    }
-    
-    if ($request->header('x-type') === 'ping') {
-        Ping::send();
     }
 });
 

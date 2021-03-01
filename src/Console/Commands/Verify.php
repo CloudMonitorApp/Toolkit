@@ -43,7 +43,5 @@ class Verify extends Command
         DB::statement('select * from applications');
         
         $this->line('Verifiying installation');
-
-        //Ping::send();
     }
 }
