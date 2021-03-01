@@ -2,10 +2,12 @@
 
 namespace CloudMonitor\Toolkit\Core\Meta;
 
+use Illuminate\Support\Facades\Request;
+
 class Client 
 {
     public function __construct() 
     {
-        $this->user_agent = $_SERVER['HTTP_USER_AGENT'] ?? null;
+        $this->user_agent = Request::header('User-Agent');
     }
 }

@@ -42,11 +42,7 @@ class Request
     
     private function address(): ?string
     {
-        if (! isset($_SERVER['REMOTE_ADDR'])) {
-            return null;
-        }
-
-        $address = $_SERVER['REMOTE_ADDR'];
+        $address = $_SERVER['REMOTE_ADDR'] ?? null;
 
         if (array_key_exists('HTTP_X_FORWARDED_FOR', $_SERVER) === true) {
             $this->remote_address = $_SERVER['HTTP_X_FORWARDED_FOR'];
