@@ -105,14 +105,10 @@ class CloudMonitor
      * @param $label
      * @return Segment
      */
-    public function startSegment($type, $label = null): Segment
+    public function startSegment($type, $label = null): ?Segment
     {
-        if ($this->segments > $this->limit) {
-            $this->transaction->end();
-        }
-
         $this->segments++;
-        $segment = new Segment($this->transaction, addslashes($type), $label);
+        $segment = new Segment($this->transaction, addslashes($type), $label, $this->segments > $this->limit);
         $segment->start();
 
         return $segment;
