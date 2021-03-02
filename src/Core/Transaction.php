@@ -48,6 +48,11 @@ class Transaction implements Transportable
             'host' => new Host,
         ];
     }
+
+    public function getContext()
+    {
+        return $this->context;
+    }
     
     /**
      * Register start time of transaction.
