@@ -17,7 +17,7 @@ class CloudMonitor
      * 
      * @var string
      */
-    const VERSION = '1.1.12';
+    const VERSION = '1.1.14';
 
     /**
      * @var Transaction
@@ -25,10 +25,23 @@ class CloudMonitor
     public $transaction;
 
     /**
+     * @var int
+     */
+    private $segments;
+
+    /**
+     * Max number of segments.
+     * 
+     * @var int
+     */
+    private $limit = 100;
+
+    /**
      * Constructs new CloudMonitor instance.
      */
     public function __construct()
     {
+        $this->segments = 0;
         register_shutdown_function([$this, 'flush']);
     }
 
@@ -79,6 +92,7 @@ class CloudMonitor
 
         if (!$this->transaction->isEnded()) {
             $this->transaction->end();
+            $this->segments = 0;
         }
 
         unset($this->transaction);
@@ -93,6 +107,11 @@ class CloudMonitor
      */
     public function startSegment($type, $label = null): Segment
     {
+        if ($this->segments > $this->limit) {
+            $this->transaction->end();
+        }
+
+        $this->segments++;
         $segment = new Segment($this->transaction, addslashes($type), $label);
         $segment->start();
 
