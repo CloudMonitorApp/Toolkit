@@ -7,20 +7,17 @@ use Exception;
 use Throwable;
 use InvalidArgumentException;
 use CloudMonitor\Toolkit\Core\Segment;
-use CloudMonitor\Toolkit\Core\Transport;
 use CloudMonitor\Toolkit\Core\Transaction;
 use CloudMonitor\Toolkit\Error\Models\Error;
 
 class CloudMonitor
 {
     /**
-     * Commands that must be ignored.
+     * Client version.
      * 
-     * @var array
+     * @var string
      */
-    const FILTERED = [null, 'Standard input code'];
-
-    const VERSION = '1.1.0';
+    const VERSION = '1.1.12';
 
     /**
      * @var Transaction
@@ -28,16 +25,10 @@ class CloudMonitor
     public $transaction;
 
     /**
-     * @var Transport
-     */
-    private $transport;
-
-    /**
      * Constructs new CloudMonitor instance.
      */
     public function __construct()
     {
-        $this->transport = new Transport();
         register_shutdown_function([$this, 'flush']);
     }
 
@@ -51,7 +42,6 @@ class CloudMonitor
     {
         $this->transaction = new Transaction(addslashes($transaction), $type);
         $this->transaction->start();
-        $this->addEntries($this->transaction);
 
         return $this->transaction;
     }
@@ -77,23 +67,6 @@ class CloudMonitor
     }
 
     /**
-     * Add entries to to transport.
-     * 
-     * @param mixed $entries
-     * @return CloudMonitor
-     */
-    public function addEntries($entries): CloudMonitor
-    {
-        $entries = is_array($entries) ? $entries : [$entries];
-
-        foreach ($entries as $entry) {
-            $this->transport->addEntry($entry);
-        }
-
-        return $this;
-    }
-
-    /**
      * Flush the transaction.
      * 
      * @return void
@@ -108,7 +81,6 @@ class CloudMonitor
             $this->transaction->end();
         }
 
-        $this->transport->flush();
         unset($this->transaction);
     }
 
@@ -123,7 +95,6 @@ class CloudMonitor
     {
         $segment = new Segment($this->transaction, addslashes($type), $label);
         $segment->start();
-        $this->addEntries($segment);
 
         return $segment;
     }
@@ -146,11 +117,7 @@ class CloudMonitor
         }
 
         $segment = $this->startSegment('exception', substr($exception->getMessage(), 0, 50));
-
         $error = (new Error($exception, $this->transaction))->setHandled($handled);
-
-        $this->addEntries($error);
-
         $segment->addContext('Error', $error)->end();
 
         return $error;

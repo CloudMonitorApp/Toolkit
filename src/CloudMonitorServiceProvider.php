@@ -5,9 +5,10 @@ namespace CloudMonitor\Toolkit;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\ServiceProvider;
 use CloudMonitor\Toolkit\Core\CloudMonitor;
-use Symfony\Component\Console\Input\ArgvInput;
+use Illuminate\Console\Scheduling\Schedule;
 use CloudMonitor\Toolkit\Console\Commands\Verify;
 use CloudMonitor\Toolkit\Console\Commands\Install;
+use CloudMonitor\Toolkit\Console\Commands\Commands;
 use CloudMonitor\Toolkit\Console\Commands\TestError;
 use CloudMonitor\Toolkit\Console\Commands\TestBackup;
 use CloudMonitor\Toolkit\Console\Commands\TestException;
@@ -41,6 +42,11 @@ class CloudMonitorServiceProvider extends ServiceProvider
 
         $this->loadRoutesFrom(__DIR__.'/routes/web.php');
 
+        $this->app->booted(function () {
+            $schedule = $this->app->make(Schedule::class);
+            $schedule->command('cloudmonitor:commands')->daily();
+        });
+
         if ($this->app->runningInConsole()) {
             $this->commands([
                 TestException::class,
@@ -48,32 +54,31 @@ class CloudMonitorServiceProvider extends ServiceProvider
                 TestBackup::class,
                 Install::class,
                 Verify::class,
+                Commands::class,
             ]);
 
-            if (config('cloudmonitor.backup.listen')) {
-                if (class_exists(\Spatie\Backup\Events\BackupWasSuccessful::class)) {
-                    Event::listen(\Spatie\Backup\Events\BackupWasSuccessful::class, BackupWasSuccessful::class);
-                }
+            if (class_exists(\Spatie\Backup\Events\BackupWasSuccessful::class)) {
+                Event::listen(\Spatie\Backup\Events\BackupWasSuccessful::class, BackupWasSuccessful::class);
+            }
 
-                if (class_exists(\Spatie\Backup\Events\BackupHasFailed::class)) {
-                    Event::listen(\Spatie\Backup\Events\BackupHasFailed::class, BackupHasFailed::class);
-                }
+            if (class_exists(\Spatie\Backup\Events\BackupHasFailed::class)) {
+                Event::listen(\Spatie\Backup\Events\BackupHasFailed::class, BackupHasFailed::class);
+            }
 
-                if (class_exists(\Spatie\Backup\Events\CleanupWasSuccessful::class)) {
-                    Event::listen(\Spatie\Backup\Events\CleanupWasSuccessful::class, CleanupWasSuccessful::class);
-                }
+            if (class_exists(\Spatie\Backup\Events\CleanupWasSuccessful::class)) {
+                Event::listen(\Spatie\Backup\Events\CleanupWasSuccessful::class, CleanupWasSuccessful::class);
+            }
 
-                if (class_exists(\Spatie\Backup\Events\CleanupHasFailed::class)) {
-                    Event::listen(\Spatie\Backup\Events\CleanupHasFailed::class, CleanupHasFailed::class);
-                }
+            if (class_exists(\Spatie\Backup\Events\CleanupHasFailed::class)) {
+                Event::listen(\Spatie\Backup\Events\CleanupHasFailed::class, CleanupHasFailed::class);
+            }
 
-                if (class_exists(\Spatie\Backup\Events\HealthyBackupWasFound::class)) {
-                    Event::listen(\Spatie\Backup\Events\HealthyBackupWasFound::class, HealthyBackupWasFound::class);
-                }
+            if (class_exists(\Spatie\Backup\Events\HealthyBackupWasFound::class)) {
+                Event::listen(\Spatie\Backup\Events\HealthyBackupWasFound::class, HealthyBackupWasFound::class);
+            }
 
-                if (class_exists(\Spatie\Backup\Events\UnhealthyBackupWasFound::class)) {
-                    Event::listen(\Spatie\Backup\Events\UnhealthyBackupWasFound::class, UnhealthyBackupWasFound::class);
-                }
+            if (class_exists(\Spatie\Backup\Events\UnhealthyBackupWasFound::class)) {
+                Event::listen(\Spatie\Backup\Events\UnhealthyBackupWasFound::class, UnhealthyBackupWasFound::class);
             }
         }
     }
@@ -85,9 +90,9 @@ class CloudMonitorServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        $this->mergeConfigFrom(
+        /*$this->mergeConfigFrom(
             __DIR__.'/config.php', 'cloudmonitor'
-        );
+        );*/
 
         $this->app->singleton('cloudmonitor', function () {
             return new CloudMonitor();
@@ -98,7 +103,7 @@ class CloudMonitorServiceProvider extends ServiceProvider
 
     private function registerServiceProviders(): void
     {
-        if ($this->app->runningInConsole() && ! in_array((new ArgvInput())->getFirstArgument(), config('cloudmonitor.ignored_commands'))) {
+        if ($this->app->runningInConsole()) {
             $this->app->register(CommandServiceProvider::class);
         }
 

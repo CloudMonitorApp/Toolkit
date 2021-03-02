@@ -8,7 +8,7 @@ use CloudMonitor\Toolkit\Core\Meta\Client;
 use CloudMonitor\Toolkit\Core\Meta\Request;
 use CloudMonitor\Toolkit\Core\Meta\Session;
 
-class Transaction
+class Transaction implements Transportable
 {
     /**
      * Types of valid transactions.
@@ -58,7 +58,7 @@ class Transaction
     public function start($time = null): Transaction
     {
         $this->timestamp = is_null($time) ? microtime(true) : $time;
-        Transport::send($this);
+        dispatch(new Queue($this));
 
         return $this;
     }
@@ -72,7 +72,7 @@ class Transaction
     public function end($duration = null)
     {
         $this->duration = $duration ?? round((microtime(true) - $this->timestamp)*1000, 2);
-        Transport::send($this);
+        dispatch(new Queue($this));
         
         return $this;
     }

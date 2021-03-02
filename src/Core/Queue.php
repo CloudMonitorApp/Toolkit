@@ -2,31 +2,49 @@
 
 namespace CloudMonitor\Toolkit\Core;
 
-use Closure;
 use Exception;
 use GuzzleHttp\Client;
-use GuzzleHttp\Exception\ServerException;
+use Illuminate\Bus\Queueable;
 use Illuminate\Encryption\Encrypter;
-use stdClass;
+use Illuminate\Queue\SerializesModels;
+use Illuminate\Queue\InteractsWithQueue;
+use GuzzleHttp\Exception\ServerException;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Foundation\Bus\Dispatchable;
 
-class Transport
+class Queue implements ShouldQueue
 {
-    public static function post(array $data = []): void
+    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
+
+    /**
+     * The transport instance.
+     *
+     * @var Transportable
+     */
+    protected $transport;
+
+    /**
+     * Create a new job instance.
+     *
+     * @return void
+     */
+    public function __construct(Transportable $transport)
     {
-        self::send('POST', $data);
+        $this->transport = $transport;
     }
 
-    public static function get(string $arg, Closure $closure): void
-    {
-        self::send('GET', [], $arg, $closure);
-    }
-
-    private static function send(string $method, array $data = [], string $arg = '', Closure $closure = null): void
+    /**
+     * Execute the job.
+     *
+     * @param  Transportable  $transport
+     * @return void
+     */
+    public function handle()
     {
         //file_put_contents(dirname(__DIR__, 1) .'/debug/queue.json', json_encode($this->transport, JSON_PRETTY_PRINT), FILE_APPEND);
 
         if (env('CLOUDMONITOR_KEY', null) === null || env('CLOUDMONITOR_SECRET', null) === null) {
-            return;
+            return null;
         }
 
         $client = new Client(['verify' => env('CLOUDMONITOR_SSL_VERIFY', true)]);
@@ -36,8 +54,8 @@ class Transport
 
         try {
             $response = $client->request(
-                $method,
-                env('CLOUDMONITOR_URL', 'https://api.cloudmonitor.dk/') .'?arg='. $arg,
+                'POST',
+                env('CLOUDMONITOR_URL', 'https://api.cloudmonitor.dk/'),
                 [
                     'headers' => [
                         'X-CloudMonitor-Timestamp' => $timestamp,
@@ -46,18 +64,14 @@ class Transport
                         'X-CloudMonitor-Signature' => self::makeSignature($timestamp),
                     ],
                     'form_params' => [
-                        'data' => self::encrypt(json_encode($data))
+                        'data' => self::encrypt(json_encode($this->transport))
                     ]
                 ]
             );
-
-            if (isset($closure) && is_callable($closure)) {
-                call_user_func_array($closure, [json_decode($response->getBody(), true)]);
-            }
         } catch(ServerException $e) {
-            dd('Server error');
+            return $response;
         } catch (Exception $e) {
-            dd($e->getMessage());
+            // Proceed
         }
     }
 

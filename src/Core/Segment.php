@@ -8,7 +8,7 @@ use CloudMonitor\Toolkit\Core\Meta\Request;
 use CloudMonitor\Toolkit\Core\Meta\Session;
 use CloudMonitor\Toolkit\Core\Meta\User;
 
-class Segment
+class Segment implements Transportable
 {
     public $model;
     public $type;
@@ -68,8 +68,7 @@ class Segment
     public function end($duration = null): Segment
     {
         $this->duration = $duration ?? round((microtime(true) - $this->timestamp)*1000, 2);
-
-        Transport::send($this);
+        dispatch(new Queue($this));
 
         return $this;
     }

@@ -44,12 +44,9 @@ class CommandServiceProvider extends ServiceProvider
 
     private function isApproved(): bool
     {
-        return ! in_array(
+        return in_array(
             (new ArgvInput)->getFirstArgument(),
-            array_merge(
-                config('cloudmonitor.ignored_commands'),
-                [null]
-            )
+            cache('cloudmonitor.commands', [])
         );
     }
 
