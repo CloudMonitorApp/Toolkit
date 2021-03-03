@@ -29,7 +29,7 @@ class Queue implements ShouldQueue
      * @param Transportable|array $transport
      * @return void
      */
-    public function __construct(mixed $transport)
+    public function __construct($transport)
     {
         $this->transport = $transport;
     }
