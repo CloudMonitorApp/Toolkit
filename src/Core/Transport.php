@@ -10,7 +10,7 @@ use GuzzleHttp\Exception\ServerException;
 
 class Transport
 {
-    public static function post(Transportable $data = null): void
+    public static function post(mixed $data = null): void
     {
         self::send('POST', $data);
     }
@@ -20,7 +20,7 @@ class Transport
         self::send('GET', null, $arg, $closure);
     }
 
-    private static function send(string $method, Transportable $data = null, string $arg = '', Closure $closure = null): void
+    private static function send(string $method, mixed $data = null, string $arg = '', Closure $closure = null): void
     {
         //file_put_contents(dirname(__DIR__, 1) .'/debug/queue.json', json_encode($this->transport, JSON_PRETTY_PRINT), FILE_APPEND);
 

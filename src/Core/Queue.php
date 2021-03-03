@@ -19,16 +19,17 @@ class Queue implements ShouldQueue
     /**
      * The transport instance.
      *
-     * @var Transportable
+     * @var Transportable|array
      */
     protected $transport;
 
     /**
      * Create a new job instance.
      *
+     * @param Transportable|array $transport
      * @return void
      */
-    public function __construct(Transportable $transport)
+    public function __construct(mixed $transport)
     {
         $this->transport = $transport;
     }
