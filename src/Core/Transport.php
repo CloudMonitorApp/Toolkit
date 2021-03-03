@@ -5,23 +5,22 @@ namespace CloudMonitor\Toolkit\Core;
 use Closure;
 use Exception;
 use GuzzleHttp\Client;
-use GuzzleHttp\Exception\ServerException;
 use Illuminate\Encryption\Encrypter;
-use stdClass;
+use GuzzleHttp\Exception\ServerException;
 
 class Transport
 {
-    public static function post(array $data = []): void
+    public static function post(Transportable $data = null): void
     {
         self::send('POST', $data);
     }
 
     public static function get(string $arg, Closure $closure): void
     {
-        self::send('GET', [], $arg, $closure);
+        self::send('GET', null, $arg, $closure);
     }
 
-    private static function send(string $method, array $data = [], string $arg = '', Closure $closure = null): void
+    private static function send(string $method, Transportable $data = null, string $arg = '', Closure $closure = null): void
     {
         //file_put_contents(dirname(__DIR__, 1) .'/debug/queue.json', json_encode($this->transport, JSON_PRETTY_PRINT), FILE_APPEND);
 

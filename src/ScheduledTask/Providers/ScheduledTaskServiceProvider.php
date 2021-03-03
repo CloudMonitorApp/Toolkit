@@ -32,7 +32,7 @@ class ScheduledTaskServiceProvider extends ServiceProvider
                 'result' => $event->task->exitCode === 0 ? 'success' : 'error',
             ]);
 
-            unlink(storage_path('logs/schedule-'.sha1($event->task->mutexName()).'.log'));
+            //unlink(storage_path('logs/schedule-'.sha1($event->task->mutexName()).'.log'));
         });
 
         $this->app['events']->listen(ScheduledTaskFailed::class, function (ScheduledTaskFailed $event) {

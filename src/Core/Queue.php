@@ -41,10 +41,6 @@ class Queue implements ShouldQueue
      */
     public function handle()
     {
-        //file_put_contents(dirname(__DIR__, 1) .'/debug/queue.json', json_encode($this->transport, JSON_PRETTY_PRINT), FILE_APPEND);
-
-        Transport::post([$this->transport]);
-
-        //Buffer::get()->add($this->transport);
+        Transport::post($this->transport);
     }
 }
