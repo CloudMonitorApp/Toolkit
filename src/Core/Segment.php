@@ -72,7 +72,7 @@ class Segment implements Transportable
         $this->duration = $duration ?? round((microtime(true) - $this->timestamp)*1000, 2);
 
         if ($this->skip === false) {
-            dispatch(new Queue($this));
+            dispatch((new Queue($this))->delay(2));
         }
 
         return $this;
