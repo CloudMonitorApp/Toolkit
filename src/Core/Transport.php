@@ -54,7 +54,7 @@ class Transport
                 call_user_func_array($closure, [json_decode($response->getBody(), true)]);
             }
         } catch(ServerException $e) {
-            dd('Server error');
+            dd($e);
         } catch (Exception $e) {
             dd($e->getMessage());
         }
