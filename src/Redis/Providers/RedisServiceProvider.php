@@ -14,8 +14,13 @@ class RedisServiceProvider extends ServiceProvider
             if (CloudMonitor::isRecording()) {
                 $microtimeDuration = $event->time / 1000;
 
-                CloudMonitor::startSegment('redis', "redis:{$event->command}")
-                    ->start(microtime(true) - $microtimeDuration)
+                $segment = CloudMonitor::startSegment('redis', "redis:{$event->command}");
+
+                if (! $segment) {
+                    return;
+                }
+
+                $segment->start(microtime(true) - $microtimeDuration)
                     ->addContext('data', [
                         'connection' => $event->connectionName,
                         'parameters' => $event->parameters

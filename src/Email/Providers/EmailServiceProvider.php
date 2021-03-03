@@ -15,9 +15,14 @@ class EmailServiceProvider extends ServiceProvider
     {
         $this->app['events']->listen(MessageSending::class, function (MessageSending $event) {
             if (CloudMonitor::isRecording()) {
-                $this->segments[$this->getSegmentKey($event->message)]
-                    = CloudMonitor::startSegment('email', get_class($event->message))
-                        ->addContext('data', $event->data);
+                $segment = CloudMonitor::startSegment('email', get_class($event->message))
+                    ->addContext('data', $event->data);
+
+                if (! $segment) {
+                    return;
+                }
+
+                $this->segments[$this->getSegmentKey($event->message)] = $segment;
             }
         });
 

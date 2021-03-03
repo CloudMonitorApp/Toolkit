@@ -15,7 +15,13 @@ class QueryServiceProvider extends ServiceProvider
                     ->startSegment(
                         $query->connectionName,
                         substr($query->sql, 0, 50)
-                    )->start(
+                    );
+                    
+                if (! $segment) {
+                    return;
+                }
+
+                $segment->start(
                         microtime(true) - $query->time/ 1000
                     );
                 

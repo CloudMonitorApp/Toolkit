@@ -154,7 +154,7 @@ class Error
             $firstLine = 0;
         }
 
-        return array_slice($file, $firstLine, $linesAround + $firstLine, true);
+        return array_slice($file, $firstLine, $linesAround, true);
 
         /*if (!$filePath || !$line) {
             return null;

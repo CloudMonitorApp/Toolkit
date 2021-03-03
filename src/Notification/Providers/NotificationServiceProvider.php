@@ -15,9 +15,14 @@ class NotificationServiceProvider extends ServiceProvider
     {   
         $this->app['events']->listen(NotificationSending::class, function (NotificationSending $event) {
             if ($this->app['cloudmonitor']->isRecording()) {
+                $segment = CloudMonitor::startSegment('notifications', get_class($event->notification));
+
+                if (! $segment) {
+                    return;
+                }
+
                 $this->segments[$event->notification->id] =
-                    CloudMonitor::startSegment('notifications', get_class($event->notification))
-                        ->addContext('data', [
+                    $segment->addContext('data', [
                             'Channel' => $event->channel,
                             'Notifiable' => get_class($event->notifiable),
                         ]

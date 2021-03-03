@@ -43,63 +43,8 @@ class Queue implements ShouldQueue
     {
         //file_put_contents(dirname(__DIR__, 1) .'/debug/queue.json', json_encode($this->transport, JSON_PRETTY_PRINT), FILE_APPEND);
 
-        if (env('CLOUDMONITOR_KEY', null) === null || env('CLOUDMONITOR_SECRET', null) === null) {
-            return null;
-        }
+        Transport::post([$this->transport]);
 
-        $client = new Client(['verify' => env('CLOUDMONITOR_SSL_VERIFY', true)]);
-        $response = null;
-
-        $timestamp = time();
-
-        try {
-            $response = $client->request(
-                'POST',
-                env('CLOUDMONITOR_URL', 'https://api.cloudmonitor.dk/'),
-                [
-                    'headers' => [
-                        'X-CloudMonitor-Timestamp' => $timestamp,
-                        'X-CloudMonitor-Version' => CloudMonitor::VERSION,
-                        'X-CloudMonitor-Token' => env('CLOUDMONITOR_KEY'),
-                        'X-CloudMonitor-Signature' => self::makeSignature($timestamp),
-                    ],
-                    'form_params' => [
-                        'data' => self::encrypt(json_encode($this->transport))
-                    ]
-                ]
-            );
-        } catch(ServerException $e) {
-            return $response;
-        } catch (Exception $e) {
-            // Proceed
-        }
-    }
-
-    /**
-     * Encrypt message before sending.
-     * 
-     * @param string $data
-     * @return string
-     */
-    public static function encrypt(string $data): string
-    {
-        $encrypter = new Encrypter(base64_decode(env('CLOUDMONITOR_SECRET')), 'AES-128-CBC');
-        
-        return $encrypter->encrypt($data);
-    }
-
-    /**
-     * Generate signature for request.
-     * 
-     * @param int $timestamp
-     * @return string
-     */
-    private static function makeSignature(int $timestamp): string
-    {
-        return hash_hmac(
-            'sha256',
-            env('CLOUDMONITOR_KEY') . $timestamp,
-            env('CLOUDMONITOR_SECRET')
-        );
+        //Buffer::get()->add($this->transport);
     }
 }

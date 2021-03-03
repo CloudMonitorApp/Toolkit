@@ -39,9 +39,6 @@ class Verify extends Command
      */
     public function handle()
     {
-        User::all();
-        DB::statement('select * from applications');
-        
         $this->line('Verifiying installation');
     }
 }

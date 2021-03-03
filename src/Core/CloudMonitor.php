@@ -2,7 +2,6 @@
 
 namespace CloudMonitor\Toolkit\Core;
 
-use Closure;
 use Exception;
 use Throwable;
 use InvalidArgumentException;
@@ -107,6 +106,10 @@ class CloudMonitor
      */
     public function startSegment($type, $label = null): ?Segment
     {
+        if ($this->segments > $this->limit) {
+            return null;
+        }
+        
         $this->segments++;
         $segment = new Segment($this->transaction, addslashes($type), $label, $this->segments > $this->limit);
         $segment->start();
