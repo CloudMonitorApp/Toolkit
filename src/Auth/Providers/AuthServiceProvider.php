@@ -21,7 +21,7 @@ class AuthServiceProvider extends ServiceProvider
 
     public function gateBefore(Authenticatable $user, $ability, $arguments)
     {
-        if (CloudMonitor::isRecording()) {
+        if (CloudMonitor::isRecording() && $this->app['cloudmonitor']->segments() < \CloudMonitor\Toolkit\Core\CloudMonitor::SEGMENT_LIMIT) {
             $this->segments[$this->generateUniqueKey(($this->formatArguments($arguments)))]
                 = $this->app['cloudmonitor']->startSegment('gate', 'Authorization::'.$ability);
         }

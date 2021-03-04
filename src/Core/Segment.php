@@ -28,7 +28,7 @@ class Segment implements Transportable
      * @param Transaction $transaction
      * @param string|null $label
      */
-    public function __construct(Transaction $transaction, $label = null, $skip = false)
+    public function __construct(Transaction $transaction, $label = null)
     {
         $this->model = 'segment';
         $this->uuid = $transaction->uuid;
@@ -41,7 +41,6 @@ class Segment implements Transportable
             'client' =>  new Client,
             'session' => new Session,
         ];
-        $this->skip = $skip;
         $this->transaction = collect($transaction)->only(['hash', 'timestamp'])->toArray();
     }
 
@@ -70,10 +69,7 @@ class Segment implements Transportable
     public function end($duration = null): Segment
     {
         $this->duration = $duration ?? round((microtime(true) - $this->timestamp)*1000, 2);
-
-        if ($this->skip === false) {
-            dispatch((new Queue($this))->delay(2));
-        }
+        dispatch((new Queue($this))->delay(2));
 
         return $this;
     }

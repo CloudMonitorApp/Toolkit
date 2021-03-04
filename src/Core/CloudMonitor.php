@@ -19,6 +19,13 @@ class CloudMonitor
     const VERSION = '1.1.14';
 
     /**
+     * Maximum number of segments to avoid high memory and cpu consumption.
+     * 
+     * @var int
+     */
+    const SEGMENT_LIMIT = 100;
+
+    /**
      * @var Transaction
      */
     public $transaction;
@@ -26,21 +33,13 @@ class CloudMonitor
     /**
      * @var int
      */
-    private $segments;
-
-    /**
-     * Max number of segments.
-     * 
-     * @var int
-     */
-    private $limit = 100;
+    private $segments = 0;
 
     /**
      * Constructs new CloudMonitor instance.
      */
     public function __construct()
     {
-        $this->segments = 0;
         register_shutdown_function([$this, 'flush']);
     }
 
@@ -56,6 +55,20 @@ class CloudMonitor
         $this->transaction->start();
 
         return $this->transaction;
+    }
+
+    /**
+     * Number of segments added to current transaction.
+     * 
+     * @return int
+     */
+    public function segments(int $segments = null): int
+    {
+        if ($segments !== null) {
+            $this->segments = $segments;
+        }
+
+        return $this->segments;
     }
 
     /**
@@ -91,7 +104,6 @@ class CloudMonitor
 
         if (!$this->transaction->isEnded()) {
             $this->transaction->end();
-            $this->segments = 0;
         }
 
         unset($this->transaction);
@@ -106,12 +118,8 @@ class CloudMonitor
      */
     public function startSegment($type, $label = null): ?Segment
     {
-        if ($this->segments > $this->limit) {
-            return null;
-        }
-        
         $this->segments++;
-        $segment = new Segment($this->transaction, addslashes($type), $label, $this->segments > $this->limit);
+        $segment = new Segment($this->transaction, addslashes($type), $label);
         $segment->start();
 
         return $segment;

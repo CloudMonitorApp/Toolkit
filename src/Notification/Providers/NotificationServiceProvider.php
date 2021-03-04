@@ -14,7 +14,7 @@ class NotificationServiceProvider extends ServiceProvider
     public function boot()
     {   
         $this->app['events']->listen(NotificationSending::class, function (NotificationSending $event) {
-            if ($this->app['cloudmonitor']->isRecording()) {
+            if ($this->app['cloudmonitor']->isRecording() && $this->app['cloudmonitor']->segments() < \CloudMonitor\Toolkit\Core\CloudMonitor::SEGMENT_LIMIT) {
                 $segment = CloudMonitor::startSegment('notifications', get_class($event->notification));
 
                 if (! $segment) {

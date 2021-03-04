@@ -8,7 +8,6 @@ use CloudMonitor\Toolkit\Core\CloudMonitor;
 use Illuminate\Console\Scheduling\Schedule;
 use CloudMonitor\Toolkit\Console\Commands\Verify;
 use CloudMonitor\Toolkit\Console\Commands\Install;
-use CloudMonitor\Toolkit\Console\Commands\Commands;
 use CloudMonitor\Toolkit\Console\Commands\TestError;
 use CloudMonitor\Toolkit\Console\Commands\TestBackup;
 use CloudMonitor\Toolkit\Console\Commands\TestException;
@@ -42,11 +41,6 @@ class CloudMonitorServiceProvider extends ServiceProvider
 
         $this->loadRoutesFrom(__DIR__.'/routes/web.php');
 
-        $this->app->booted(function () {
-            $schedule = $this->app->make(Schedule::class);
-            $schedule->command('cloudmonitor:commands')->daily();
-        });
-
         if ($this->app->runningInConsole()) {
             $this->commands([
                 TestException::class,
@@ -54,7 +48,6 @@ class CloudMonitorServiceProvider extends ServiceProvider
                 TestBackup::class,
                 Install::class,
                 Verify::class,
-                Commands::class,
             ]);
 
             if (class_exists(\Spatie\Backup\Events\BackupWasSuccessful::class)) {

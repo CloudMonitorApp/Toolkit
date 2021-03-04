@@ -4,7 +4,9 @@ namespace CloudMonitor\Toolkit\Command\Providers;
 
 use ReflectionClass;
 use ReflectionException;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\ServiceProvider;
+use CloudMonitor\Toolkit\Core\Transport;
 use Illuminate\Contracts\Console\Kernel;
 use CloudMonitor\Toolkit\Core\Transaction;
 use Illuminate\Console\Events\CommandFinished;
@@ -44,6 +46,12 @@ class CommandServiceProvider extends ServiceProvider
 
     private function isApproved(): bool
     {
+        if (! Cache::has('cloudmonitor.commands')) {
+            Transport::get('cmd', function($response) {
+                Cache::put('cloudmonitor.commands', $response, 60*60*24);
+            });
+        }
+
         return in_array(
             (new ArgvInput)->getFirstArgument(),
             cache('cloudmonitor.commands', [])
