@@ -7,6 +7,7 @@ use Exception;
 use GuzzleHttp\Client;
 use Illuminate\Encryption\Encrypter;
 use GuzzleHttp\Exception\ServerException;
+use Illuminate\Support\Facades\Log;
 
 class Transport
 {
@@ -54,9 +55,9 @@ class Transport
                 call_user_func_array($closure, [json_decode($response->getBody(), true)]);
             }
         } catch(ServerException $e) {
-            dd($e);
+            Log::error($e->getMessage());
         } catch (Exception $e) {
-            dd($e->getMessage());
+            Log::error($e->getMessage());
         }
     }
 
