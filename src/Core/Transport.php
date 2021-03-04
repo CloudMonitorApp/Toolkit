@@ -34,7 +34,7 @@ class Transport
         $timestamp = time();
 
         try {
-            $response = $client->requestAsync(
+            $response = $client->request(
                 $method,
                 env('CLOUDMONITOR_URL', 'https://api.cloudmonitor.dk/') .'?arg='. $arg,
                 [
