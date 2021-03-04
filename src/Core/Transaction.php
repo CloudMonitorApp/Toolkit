@@ -77,7 +77,7 @@ class Transaction implements Transportable
     public function end($duration = null)
     {
         $this->duration = $duration ?? round((microtime(true) - $this->timestamp)*1000, 2);
-        dispatch((new Queue($this))->delay(2));
+        dispatch(new Queue($this));
         $this->app['cloudmonitor']->segments(0);
         
         return $this;
