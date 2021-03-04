@@ -22,28 +22,26 @@ class ScheduledTaskServiceProvider extends ServiceProvider
         });
 
         $this->app['events']->listen(ScheduledTaskFinished::class, function (ScheduledTaskFinished $event) {
-            $output = file_get_contents($event->task->output);
-
-            dispatch((new Queue([
-                'type' => 'output',
-                'uuid' => str_ireplace('#CLOUDMONITOR#', '', strtok($output, "\n")),
-                'context' => trim(preg_replace('/^.+\n/', '', $output), "\n"),
-                'task' => $event->task,
-                'result' => $event->task->exitCode === 0 ? 'success' : 'error',
-            ]))->delay(2));
-
-            unlink(storage_path('logs/schedule-'.sha1($event->task->mutexName()).'.log'));
+            $this->finish($event);
         });
 
         $this->app['events']->listen(ScheduledTaskFailed::class, function (ScheduledTaskFailed $event) {
-            $output = file_get_contents($event->task->output);
-
-            dispatch((new Queue([
-                'type' => 'output',
-                'uuid' => str_ireplace('#CLOUDMONITOR#', '', strtok($output, "\n")),
-                'context' => trim(preg_replace('/^.+\n/', '', $output), "\n"),
-                'result' => 'error',
-            ]))->delay(2));
+            $this->finish($event);
         });
+    }
+
+    private function finish($event)
+    {
+        $output = file_get_contents($event->task->output);
+
+        dispatch((new Queue([
+            'type' => 'output',
+            'uuid' => str_ireplace('#CLOUDMONITOR#', '', strtok($output, "\n")),
+            'context' => trim(preg_replace('/^.+\n/', '', $output), "\n"),
+            'expression' => $event->task->expression,
+            'result' => $event->task->exitCode
+        ]))->delay(2));
+
+        @unlink(storage_path('logs/schedule-'.sha1($event->task->mutexName()).'.log'));
     }
 }
