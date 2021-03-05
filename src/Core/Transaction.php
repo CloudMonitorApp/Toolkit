@@ -2,6 +2,7 @@
 
 namespace CloudMonitor\Toolkit\Core;
 
+use CloudMonitor\Toolkit\Core\Facades\CloudMonitor;
 use CloudMonitor\Toolkit\Core\Meta\Host;
 use CloudMonitor\Toolkit\Core\Meta\User;
 use CloudMonitor\Toolkit\Core\Meta\Client;
@@ -78,7 +79,7 @@ class Transaction implements Transportable
     {
         $this->duration = $duration ?? round((microtime(true) - $this->timestamp)*1000, 2);
         dispatch(new Queue($this));
-        $this->app['cloudmonitor']->segments(0);
+        CloudMonitor::segments(0);
         
         return $this;
     }
