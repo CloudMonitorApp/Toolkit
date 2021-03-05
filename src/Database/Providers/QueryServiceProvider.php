@@ -11,7 +11,7 @@ class QueryServiceProvider extends ServiceProvider
     public function boot()
     {
         $this->app['events']->listen(QueryExecuted::class, function (QueryExecuted $query) {
-            if ($this->app['cloudmonitor']->isRecording() && $this->app['cloudmonitor']->segments() < CloudMonitor::SEGMENT_LIMIT) {
+            if ($this->app['cloudmonitor']->isRecording() && $this->app['cloudmonitor']->canAddSegment('query')) {
                 $this->app['cloudmonitor']
                     ->startSegment(
                         $query->connectionName,

@@ -42,7 +42,7 @@ class ExceptionsServiceProvider extends ServiceProvider
 
     protected function reportException(Throwable $exception)
     {
-        if (!CloudMonitor::isRecording()) {
+        if (! CloudMonitor::isRecording()) {
             CloudMonitor::startTransaction(get_class($exception), Transaction::TRANSACTION_EXCEPTION);
         }
         

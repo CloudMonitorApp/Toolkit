@@ -11,7 +11,7 @@ class RedisServiceProvider extends ServiceProvider
     public function boot()
     {
         $this->app['events']->listen(CommandExecuted::class, function (CommandExecuted $event) {
-            if (CloudMonitor::isRecording() && $this->app['cloudmonitor']->segments() < \CloudMonitor\Toolkit\Core\CloudMonitor::SEGMENT_LIMIT) {
+            if (CloudMonitor::isRecording() && $this->app['cloudmonitor']->canAddSegment('redis')) {
                 $microtimeDuration = $event->time / 1000;
 
                 $segment = CloudMonitor::startSegment('redis', "redis:{$event->command}");

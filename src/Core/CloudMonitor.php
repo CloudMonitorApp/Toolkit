@@ -16,7 +16,7 @@ class CloudMonitor
      * 
      * @var string
      */
-    const VERSION = '1.1.14';
+    const VERSION = '1.1.15';
 
     /**
      * Maximum number of segments to avoid high memory and cpu consumption.
@@ -24,6 +24,14 @@ class CloudMonitor
      * @var int
      */
     const SEGMENT_LIMIT = 100;
+
+    /**
+     * Segment labels that will always be allowed no matter limitation.
+     * - gate, query, email, notifications, redis, exception
+     * 
+     * @var array
+     */
+    const SEGMENT_WHITELIST = ['exception'];
 
     /**
      * @var Transaction
@@ -69,6 +77,21 @@ class CloudMonitor
         }
 
         return $this->segments;
+    }
+
+    /**
+     * Determine if segment can be added to queue.
+     * 
+     * @param string $label
+     * @return bool
+     */
+    public function canAddSegment(string $label): bool
+    {
+        if (in_array($label, self::SEGMENT_WHITELIST)) {
+            return true;
+        }
+
+        return $this->segments() > self::SEGMENT_LIMIT;
     }
 
     /**
@@ -142,9 +165,11 @@ class CloudMonitor
             $this->startTransaction($exception->getMessage(), Transaction::TRANSACTION_EXCEPTION);
         }
 
-        $segment = $this->startSegment('exception', substr($exception->getMessage(), 0, 50));
-        $error = (new Error($exception, $this->transaction))->setHandled($handled);
-        $segment->addContext('Error', $error)->end();
+        if($this->canAddSegment('exception')) {
+            $segment = $this->startSegment('exception', substr($exception->getMessage(), 0, 50));
+            $error = (new Error($exception, $this->transaction))->setHandled($handled);
+            $segment->addContext('Error', $error)->end();
+        }
 
         return $error;
     }
