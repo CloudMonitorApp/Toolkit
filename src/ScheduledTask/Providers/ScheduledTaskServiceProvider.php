@@ -34,13 +34,13 @@ class ScheduledTaskServiceProvider extends ServiceProvider
     {
         $output = file_get_contents($event->task->output);
 
-        dispatch((new Queue([
+        dispatch(new Queue([
             'type' => 'output',
             'uuid' => str_ireplace('#CLOUDMONITOR#', '', strtok($output, "\n")),
             'context' => trim(preg_replace('/^.+\n/', '', $output), "\n"),
             'expression' => $event->task->expression,
             'result' => $event->task->exitCode
-        ]))->delay(2));
+        ]));
 
         @unlink(storage_path('logs/schedule-'.sha1($event->task->mutexName()).'.log'));
     }

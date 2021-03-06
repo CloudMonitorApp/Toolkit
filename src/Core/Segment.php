@@ -69,7 +69,7 @@ class Segment implements Transportable
     public function end($duration = null): Segment
     {
         $this->duration = $duration ?? round((microtime(true) - $this->timestamp)*1000, 2);
-        dispatch((new Queue($this))->delay(2));
+        dispatch(new Queue($this));
 
         return $this;
     }
