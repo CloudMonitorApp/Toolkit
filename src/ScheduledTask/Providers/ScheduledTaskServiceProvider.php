@@ -39,7 +39,7 @@ class ScheduledTaskServiceProvider extends ServiceProvider
             'uuid' => str_ireplace('#CLOUDMONITOR#', '', strtok($output, "\n")),
             'context' => trim(preg_replace('/^.+\n/', '', $output), "\n"),
             'expression' => $event->task->expression,
-            'result' => $event->task->exitCode
+            'result' => $event->task->exitCode,
         ]));
 
         @unlink(storage_path('logs/schedule-'.sha1($event->task->mutexName()).'.log'));
