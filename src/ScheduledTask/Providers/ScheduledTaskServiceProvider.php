@@ -32,7 +32,11 @@ class ScheduledTaskServiceProvider extends ServiceProvider
 
     private function finish($event)
     {
-        $output = file_get_contents($event->task->output);
+        $output = null;
+        
+        if (is_file($event->task->output)) {
+            $output = file_get_contents($event->task->output);
+        }
 
         dispatch(new Queue([
             'type' => 'output',
