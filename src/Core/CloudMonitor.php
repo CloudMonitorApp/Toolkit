@@ -91,7 +91,7 @@ class CloudMonitor
             return true;
         }
 
-        return $this->segments() > self::SEGMENT_LIMIT;
+        return $this->segments() <= self::SEGMENT_LIMIT;
     }
 
     /**
