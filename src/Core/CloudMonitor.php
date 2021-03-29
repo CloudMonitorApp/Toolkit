@@ -16,7 +16,7 @@ class CloudMonitor
      * 
      * @var string
      */
-    const VERSION = '1.1.16';
+    const VERSION = '1.1.17';
 
     /**
      * Maximum number of segments to avoid high memory and cpu consumption.
