@@ -45,11 +45,11 @@ class Request
         $address = $_SERVER['REMOTE_ADDR'] ?? null;
 
         if (array_key_exists('HTTP_X_FORWARDED_FOR', $_SERVER) === true) {
-            $this->remote_address = $_SERVER['HTTP_X_FORWARDED_FOR'];
+            $address = $_SERVER['HTTP_X_FORWARDED_FOR'];
         }
 
         if (array_key_exists('HTTP_X_REAL_IP', $_SERVER)) {
-            $this->remote_address = $_SERVER['HTTP_X_REAL_IP'];
+            $address = $_SERVER['HTTP_X_REAL_IP'];
         }
 
         return $address;
