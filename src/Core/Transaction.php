@@ -29,6 +29,7 @@ class Transaction implements Transportable
     public $context;
     public $result;
     public $meta;
+    public $segments;
 
     /**
      * Construct new transaction.
@@ -106,6 +107,17 @@ class Transaction implements Transportable
         $this->context[$label] = $data;
 
         return $this;
+    }
+
+    /**
+     * Add segment to transaction.
+     * 
+     * @param Segment $segment
+     * @return void
+     */
+    public function addSegment(Segment $segment): void
+    {
+        $this->segments[] = $segment;
     }
 
     /**

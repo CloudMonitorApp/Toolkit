@@ -20,7 +20,6 @@ class Segment implements Transportable
     public $context;
     public $uuid;
     public $meta;
-    private $skip;
 
     /**
      * Construct new Segment.
@@ -42,6 +41,7 @@ class Segment implements Transportable
             'session' => new Session,
         ];
         $this->transaction = collect($transaction)->only(['hash', 'timestamp'])->toArray();
+        $transaction->addSegment($this);
     }
 
     /**
