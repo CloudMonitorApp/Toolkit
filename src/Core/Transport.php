@@ -23,7 +23,7 @@ class Transport
 
     private static function send(string $method, $data = null, string $arg = '', Closure $closure = null): void
     {
-        //file_put_contents(dirname(__DIR__, 1) .'/debug/queue.json', json_encode($this->transport, JSON_PRETTY_PRINT), FILE_APPEND);
+        //file_put_contents(dirname(__DIR__, 1) .'/debug/queue.json', json_encode($data, JSON_PRETTY_PRINT), FILE_APPEND);
 
         if (env('CLOUDMONITOR_KEY', null) === null || env('CLOUDMONITOR_SECRET', null) === null) {
             return;

@@ -2,12 +2,12 @@
 
 namespace CloudMonitor\Toolkit\Core;
 
-use CloudMonitor\Toolkit\Core\Facades\CloudMonitor;
 use CloudMonitor\Toolkit\Core\Meta\Host;
 use CloudMonitor\Toolkit\Core\Meta\User;
 use CloudMonitor\Toolkit\Core\Meta\Client;
 use CloudMonitor\Toolkit\Core\Meta\Request;
 use CloudMonitor\Toolkit\Core\Meta\Session;
+use CloudMonitor\Toolkit\Core\Facades\CloudMonitor;
 
 class Transaction implements Transportable
 {
@@ -64,7 +64,7 @@ class Transaction implements Transportable
     public function start($time = null): Transaction
     {
         $this->timestamp = is_null($time) ? microtime(true) : $time;
-        dispatch(new Queue($this));
+        //dispatch(new Queue($this));
 
         return $this;
     }
