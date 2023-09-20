@@ -11,9 +11,9 @@ use Illuminate\Support\Facades\Log;
 
 class Transport
 {
-    public static function post($data = null): void
+    public static function post($data = null, $prefix = ''): void
     {
-        self::send('POST', $data);
+        self::send('POST', $data, '', null, $prefix);
     }
 
     public static function get(string $arg, Closure $closure): void
@@ -21,9 +21,11 @@ class Transport
         self::send('GET', null, $arg, $closure);
     }
 
-    private static function send(string $method, $data = null, string $arg = '', Closure $closure = null): void
+    private static function send(string $method, $data = null, string $arg = '', Closure $closure = null, $prefix = ''): void
     {
-        //file_put_contents(dirname(__DIR__, 1) .'/debug/queue.json', json_encode($data, JSON_PRETTY_PRINT), FILE_APPEND);
+        file_put_contents(storage_path('cloudmonitor/'. $prefix .'-'. (is_array($data) ? $data['uuid'] : $data->uuid) .'.log'), json_encode($data, JSON_PRETTY_PRINT), FILE_APPEND);
+
+        return;
 
         if (env('CLOUDMONITOR_KEY', null) === null || env('CLOUDMONITOR_SECRET', null) === null) {
             return;

@@ -17,6 +17,7 @@ class Transaction implements Transportable
      * @var string
      */
     const TRANSACTION_COMMAND = 'command';
+    const TRANSACTION_TASK = 'task';
     const TRANSACTION_EXCEPTION = 'exception';
     const TRANSACTION_REQUEST = 'request';
     const TRANSACTION_BACKUP = 'backup';
@@ -65,7 +66,7 @@ class Transaction implements Transportable
     public function start($time = null): Transaction
     {
         $this->timestamp = is_null($time) ? microtime(true) : $time;
-        //dispatch(new Queue($this));
+        dispatch(new Queue($this, 'start'));
 
         return $this;
     }
@@ -79,9 +80,9 @@ class Transaction implements Transportable
     public function end($duration = null)
     {
         $this->duration = $duration ?? round((microtime(true) - $this->timestamp)*1000, 2);
-        dispatch(new Queue($this));
+        dispatch(new Queue($this, 'end'));
         CloudMonitor::segments(0);
-        
+
         return $this;
     }
 

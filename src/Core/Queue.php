@@ -22,6 +22,7 @@ class Queue implements ShouldQueue
      * @var Transportable|array
      */
     protected $transport;
+    private $prefix;
 
     /**
      * Create a new job instance.
@@ -29,9 +30,10 @@ class Queue implements ShouldQueue
      * @param Transportable|array $transport
      * @return void
      */
-    public function __construct($transport)
+    public function __construct($transport, $prefix)
     {
         $this->transport = $transport;
+        $this->prefix = $prefix;
     }
 
     /**
@@ -42,6 +44,6 @@ class Queue implements ShouldQueue
      */
     public function handle()
     {
-        Transport::post($this->transport);
+        Transport::post($this->transport, $this->prefix);
     }
 }

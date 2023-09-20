@@ -2,9 +2,8 @@
     "name": "cloudmonitor/toolkit",
     "description": "Toolkit for integrating a project to CloudMonitor.dk",
     "require": {
-        "laravel/framework": "^7.0|^8.0",
-        "spatie/laravel-backup": "^6.11",
-        "php": "^7.4|^8.0"
+        "laravel/framework": "^8.0",
+        "php": "^8.0"
     },
     "autoload": {
         "psr-4": {

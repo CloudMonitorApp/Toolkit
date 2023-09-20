@@ -103,7 +103,7 @@ class CloudMonitorServiceProvider extends ServiceProvider
         if ($this->app->runningInConsole()) {
             $this->app->register(ScheduledTaskServiceProvider::class);
         }
-        
+
         $this->app->register(AuthServiceProvider::class);
         $this->app->register(ExceptionsServiceProvider::class);
         $this->app->register(QueryServiceProvider::class);

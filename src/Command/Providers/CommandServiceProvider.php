@@ -27,7 +27,7 @@ class CommandServiceProvider extends ServiceProvider
         }
 
         $this->app['events']->listen(CommandStarting::class, function(CommandStarting $event) {
-            //
+            // 
         });
 
         $this->app['events']->listen(CommandFinished::class, function (CommandFinished $event) {
@@ -46,6 +46,14 @@ class CommandServiceProvider extends ServiceProvider
 
     private function isApproved(): bool
     {
+        return in_array(
+            (new ArgvInput)->getFirstArgument(),
+            cache('cloudmonitor.commands', [
+                'test:progress',
+                'test:my-progress'
+            ])
+        );
+
         if (! Cache::has('cloudmonitor.commands')) {
             Transport::get('cmd', function($response) {
                 Cache::put('cloudmonitor.commands', $response, 60*60*24);
